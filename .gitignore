@@ -1,0 +1,62 @@
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/storage/debugbar
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/app/*
+/.env
+/.env.*
+/.env.local
+/.env.*.php
+/.phpunit.result.cache
+
+# Composer
+composer.phar
+
+# Laravel Mix / Vite
+/public/hot
+/public/mix-manifest.json
+/public/css
+/public/js
+/public/build
+
+# NPM / Yarn
+yarn-debug.log
+yarn-error.log
+npm-debug.log
+
+# IDE / Editor Files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+/.vscode
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# PHPUnit
+/phpunit.result.cache
+
+# Laravel Envoyer & Forge
+.env.production
+.env.local
+
+# Jetstream & Laravel Breeze specific
+/public/storage
+/storage/public
+
+# Backups
+*.bak
+*.backup
+
+# PHPUnit
+/.phpunit.result.cache
