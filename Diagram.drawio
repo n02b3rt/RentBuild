@@ -1,0 +1,152 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.2 Chrome/134.0.6998.205 Electron/35.3.0 Safari/537.36" version="27.0.2">
+  <diagram name="Strona-1" id="lWSHSH4AXyFH2gYiXC6V">
+    <mxGraphModel dx="2864" dy="1236" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-1" value="Sprzęt" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="930" y="390" width="390" height="326" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-2" value="o ID (unikalny identyfikator)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="26" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-3" value="Nazwa sprzętu " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="56" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-4" value="Opis (specyfikacja techniczna, dodatkowe uwagi)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="86" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-9" value="ID_kategorii (odniesienie do tabeli kategorii) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="116" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-10" value="Dostępność (np. liczba jednostek dostępnych lub status dostępności) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="146" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-11" value="Cena wynajmu (np. za dzień, tydzień) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="176" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-12" value="Zdjęcia lub multimedia (odnośniki do zasobów graficznych) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="206" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-13" value="Stan techniczny (np. nowy, używany, w naprawie)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="236" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-14" value="Kategoria&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="266" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-54" value="&lt;div&gt;upust (promocja)&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-1" vertex="1">
+          <mxGeometry y="296" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-15" value="users" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="930" y="750" width="390" height="386" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-16" value="ID_klienta " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="26" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-17" value="Imię" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="56" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-18" value="nazwisko" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="86" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-19" value="numer telefonu" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="116" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-20" value="email" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="146" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-52" value="Hasło (zaszyfrowane)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="176" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-21" value="adres" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="206" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-22" value="Adres (np. do wysyłki sprzętu lub weryfikacji)  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="236" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-23" value="Dane płatnicze (odniesienie do bezpiecznego przechowywania, np. tokenizacja &lt;br/&gt;metod płatności)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="266" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-24" value="&lt;div&gt;Rola (np. administrator, menadżer, obsługa klienta)&amp;nbsp;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="296" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-55" value="&lt;div&gt;ilość wypożyczeń&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="326" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-56" value="&lt;div&gt;stan konta&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-15" vertex="1">
+          <mxGeometry y="356" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-25" value="Rezerwacje / wypożyczenia" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="430" y="820" width="390" height="296" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-26" value="ID_rezerwacji  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="26" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-27" value="ID_klienta (klucz obcy do tabeli Klienci) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="56" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-28" value="ID_sprzętu (klucz obcy do tabeli Sprzęt) " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="86" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-29" value="Data rozpoczęcia rezerwacji " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="116" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-30" value="Data zakończenia wypożyczenia " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="146" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-31" value="Status rezerwacji (np. zaplanowane, aktywne, zakończone, anulowane, rekalamacja&lt;div&gt;)&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="176" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-32" value="Uwagi (dodatkowe informacje, np. warunki wynajmu, opis reklamacji)   " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="206" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-33" value="Dane płatnicze (odniesienie do bezpiecznego przechowywania, np. tokenizacja &lt;br/&gt;metod płatności)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="236" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-34" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-25" vertex="1">
+          <mxGeometry y="266" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-35" value="Tabela Płatności " style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="-60" y="790" width="390" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-36" value="ID_płatności   " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-35" vertex="1">
+          <mxGeometry y="26" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-37" value="ID_rezerwacji  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-35" vertex="1">
+          <mxGeometry y="56" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-38" value="Kwota  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-35" vertex="1">
+          <mxGeometry y="86" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-39" value="Data płatności  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-35" vertex="1">
+          <mxGeometry y="116" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-40" value="Status płatności (np. opłacone, oczekujące, anulowane)  " style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="F-tQbkLNRFU5ONKQHyZZ-35" vertex="1">
+          <mxGeometry y="146" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-53" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Do zmiany&lt;/h1&gt;&lt;p&gt;tabela obrazeki - id, main, więcej.&lt;/p&gt;&lt;p&gt;uwzględnić pracowników - koszta&lt;/p&gt;&lt;p&gt;&amp;nbsp;w trakcie&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;to ... &amp;lt;wymyślenie logiki “poniesienia kosztu” za ten zwrot&amp;gt;),: wypożyczyłeś sprzęt na tydzień wyrobileś się w 3 dni robisz zwrot &quot;reklamacje&quot; i jak admin zatwierdzi to dostajesz spowrotem za 2 dni zwrot&lt;/span&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="330" y="426" width="290" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="F-tQbkLNRFU5ONKQHyZZ-2" target="F-tQbkLNRFU5ONKQHyZZ-28" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="F-tQbkLNRFU5ONKQHyZZ-16" target="F-tQbkLNRFU5ONKQHyZZ-26" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1170" y="181" as="sourcePoint" />
+            <mxPoint x="690" y="490" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="850" y="790" />
+              <mxPoint x="850" y="861" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="F-tQbkLNRFU5ONKQHyZZ-26" target="F-tQbkLNRFU5ONKQHyZZ-37" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="F-tQbkLNRFU5ONKQHyZZ-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.751;entryY=0.061;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="F-tQbkLNRFU5ONKQHyZZ-1" target="F-tQbkLNRFU5ONKQHyZZ-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
