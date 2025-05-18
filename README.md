@@ -57,6 +57,10 @@ npm run dev
 
 utwórz plik .env kopiując plik .env.example i uzupełnij:
 ```bash
+cp .env.example .env
+```
+w pliku:
+```bash
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
@@ -65,8 +69,17 @@ DB_USERNAME={użytkownik}
 DB_PASSWORD={haslo}
 ```
 
+wygeneruj klucz aplikacji:
+```bash
+php artisan key:generate
+```
 
-wykonanie migracji bazy i dodanie seederów:
+### Migracje + Seedery
+Wyczyść i stwórz bazę danych od nowa + załaduj dane startowe:
+```bash
+php artisan migrate:fresh --seed
+```
+albo osobno:
 ```bash
 php artisan migrate:fresh
 php artisan db:seed --class=SprzetSeeder
@@ -76,6 +89,7 @@ sprawdzenie czy migracja i seedery działają
 ```bash
 php artisan tinker
 > \App\Models\Sprzet::all();
+> \App\Models\User::all();
 ```
 tutaj wyświetla się baza
 
