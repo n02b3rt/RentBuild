@@ -54,3 +54,29 @@ Frontend (Vite + CSS/JS):
 ```bash
 npm run dev
 ```
+
+utwórz plik .env kopiując plik .env.example i uzupełnij:
+```bash
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE={nazwa_bazy}
+DB_USERNAME={użytkownik}
+DB_PASSWORD={haslo}
+```
+
+
+wykonanie migracji bazy i dodanie seederów:
+```bash
+php artisan migrate:fresh
+php artisan db:seed --class=SprzetSeeder
+```
+
+sprawdzenie czy migracja i seedery działają
+```bash
+php artisan tinker
+> \App\Models\Sprzet::all();
+```
+tutaj wyświetla się baza
+
+
