@@ -9,13 +9,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Wyświetla widok rejestracji.
      */
     public function create(): View
     {
@@ -23,28 +24,48 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Obsługuje żądanie rejestracji.
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        $validated = $request->validate([
+            'first_name'         => ['required', 'string', 'max:255'],
+            'last_name'          => ['required', 'string', 'max:255'],
+            'phone'              => ['nullable', 'string', 'max:20'],
+            'email'              => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password'           => ['required', 'confirmed', Rules\Password::defaults()],
+            'address'            => ['required', 'string', 'max:1024'],
+            'same_address'       => ['nullable'], // checkbox
+            'shipping_address'   => ['nullable', 'string', 'max:1024'],
         ]);
 
+        $isSame = ($validated['same_address'] ?? false) === 'on';
+
+        $shippingAddress = $isSame
+            ? $validated['address']
+            : ($validated['shipping_address'] ?? null);
+
+//        dd($validated, $request->all());
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'first_name'        => $validated['first_name'],
+            'last_name'         => $validated['last_name'],
+            'phone'             => $validated['phone'] ?? null,
+            'email'             => $validated['email'],
+            'password'          => Hash::make($validated['password']),
+            'address'           => $validated['address'],
+            'shipping_address'  => $shippingAddress,
+            'payment_token'     => Str::uuid(),
+            'payment_provider'  => 'rentbuild',
+            'role'              => 'klient',
+            'account_balance'   => 0,
+            'rentals_count'     => 0,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 }
