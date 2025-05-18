@@ -41,7 +41,7 @@
                         </x-slot>
                     </x-dropdown>
                 @else
-                    <a href="{{ route('login') }}" class="bg-brand px-4 py-2 rounded-md text-sm font-semibold hover:bg-orange-700 text-white">
+                    <a href="{{ route('login') }}" class="bg-[#f56600] px-4 py-2 rounded-md text-sm font-semibold hover:bg-orange-700 text-white">
                         Zaloguj się
                     </a>
                 @endauth

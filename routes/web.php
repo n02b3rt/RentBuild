@@ -2,10 +2,19 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SprzetController;
 
 Route::get('/', function () {
     return view('home');
 });
+
+
+
+Route::get('/sprzety', [SprzetController::class, 'index'])->name('sprzety.index');
+
+Route::get('/sprzety/{id}', [SprzetController::class, 'show'])->name('sprzety.pokaz');
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
