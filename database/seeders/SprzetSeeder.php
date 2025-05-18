@@ -20,6 +20,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Młoty wyburzeniowe / udarowe',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Bosch GSH 16-30',
@@ -31,6 +32,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Młoty wyburzeniowe / udarowe',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita HM1812',
@@ -42,6 +44,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Młoty wyburzeniowe / udarowe',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita HM1812',
@@ -53,6 +56,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Młoty wyburzeniowe / udarowe',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Stihl MS 661',
@@ -64,6 +68,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Pilarki i piły mechaniczne',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Stihl MS 661',
@@ -75,6 +80,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Pilarki i piły mechaniczne',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Husqvarna 550 XP',
@@ -86,6 +92,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Pilarki i piły mechaniczne',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Husqvarna 550 XP',
@@ -97,6 +104,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Pilarki i piły mechaniczne',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Kubota KX019-4',
@@ -108,6 +116,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Minikoparki',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Kubota KX019-4',
@@ -119,6 +128,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Minikoparki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'JCB 8025 ZTS',
@@ -130,6 +140,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Minikoparki',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'JCB 8025 ZTS',
@@ -141,6 +152,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Minikoparki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Haulotte Compact 10',
@@ -152,6 +164,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Podnośniki i zwyżki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Haulotte Compact 10',
@@ -163,6 +176,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Podnośniki i zwyżki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Genie GS-1932',
@@ -174,6 +188,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Podnośniki i zwyżki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Genie GS-1932',
@@ -185,6 +200,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Podnośniki i zwyżki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Wacker Neuson DPU6555',
@@ -196,6 +212,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Zagęszczarki i ubijaki',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Wacker Neuson DPU6555',
@@ -207,6 +224,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Zagęszczarki i ubijaki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Bomag BPR 60/65',
@@ -218,6 +236,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Zagęszczarki i ubijaki',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Bomag BPR 60/65',
@@ -229,6 +248,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Zagęszczarki i ubijaki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Altrad BWE 150',
@@ -240,6 +260,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Betoniarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Altrad BWE 150',
@@ -251,6 +272,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Betoniarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Lescha SM145S',
@@ -262,6 +284,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Betoniarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Lescha SM145S',
@@ -273,6 +296,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Betoniarki',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'DeWalt DCD796',
@@ -284,6 +308,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Wiertarki i wkrętarki',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'DeWalt DCD796',
@@ -295,6 +320,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Wiertarki i wkrętarki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita DHP458',
@@ -306,6 +332,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Wiertarki i wkrętarki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita DHP458',
@@ -317,6 +344,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Wiertarki i wkrętarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Cat 906M',
@@ -328,6 +356,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Ładowarki',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Cat 906M',
@@ -339,6 +368,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Ładowarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'JCB 403',
@@ -350,6 +380,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Ładowarki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'JCB 403',
@@ -361,6 +392,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Ładowarki',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Master DH 752',
@@ -372,6 +404,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Osuszacze i nagrzewnice',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Master DH 752',
@@ -383,6 +416,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Osuszacze i nagrzewnice',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Trotec TTK 171 ECO',
@@ -394,6 +428,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Osuszacze i nagrzewnice',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Trotec TTK 171 ECO',
@@ -405,6 +440,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Osuszacze i nagrzewnice',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Fiac AB100/268',
@@ -416,6 +452,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Sprężarki i kompresory',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Fiac AB100/268',
@@ -427,6 +464,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Sprężarki i kompresory',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Atlas Copco XAS 88',
@@ -438,6 +476,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Sprężarki i kompresory',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Atlas Copco XAS 88',
@@ -449,6 +488,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Sprężarki i kompresory',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Honda EU22i',
@@ -460,6 +500,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Agregaty prądotwórcze',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Honda EU22i',
@@ -471,6 +512,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Agregaty prądotwórcze',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Fogo FH 6001 R',
@@ -482,6 +524,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Agregaty prądotwórcze',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Fogo FH 6001 R',
@@ -493,6 +536,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Agregaty prądotwórcze',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Krause Corda 3x12',
@@ -504,6 +548,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Rusztowania i drabiny',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Krause Corda 3x12',
@@ -515,6 +560,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Rusztowania i drabiny',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Altrad Mostostal 5.5m',
@@ -526,6 +572,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Rusztowania i drabiny',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Altrad Mostostal 5.5m',
@@ -537,6 +584,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Rusztowania i drabiny',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Volvo EC220E',
@@ -548,6 +596,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Koparki',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Volvo EC220E',
@@ -559,6 +608,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Koparki',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Komatsu PC210 LC',
@@ -570,6 +620,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Koparki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Komatsu PC210 LC',
@@ -581,6 +632,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Koparki',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Honda WT30X',
@@ -592,6 +644,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Pompy wodne',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Honda WT30X',
@@ -603,6 +656,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'naprawa',
                 'kategoria' => 'Pompy wodne',
                 'upust' => null,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Koshin SEH-80X',
@@ -614,6 +668,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Pompy wodne',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Koshin SEH-80X',
@@ -625,6 +680,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Pompy wodne',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Bosch GWS 22-230',
@@ -636,6 +692,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Szlifierki i przecinarki',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Bosch GWS 22-230',
@@ -647,6 +704,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Szlifierki i przecinarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita DGA900',
@@ -658,6 +716,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Szlifierki i przecinarki',
                 'upust' => 5,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Makita DGA900',
@@ -669,6 +728,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Szlifierki i przecinarki',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Spectra Precision LL300N',
@@ -680,6 +740,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Lasery budowlane i niwelatory',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Spectra Precision LL300N',
@@ -691,6 +752,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'nowy',
                 'kategoria' => 'Lasery budowlane i niwelatory',
                 'upust' => 15,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Topcon RL-H5A',
@@ -702,6 +764,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Lasery budowlane i niwelatory',
                 'upust' => 10,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
             [
                 'nazwa' => 'Topcon RL-H5A',
@@ -713,6 +776,7 @@ class SprzetSeeder extends Seeder
                 'stan_techniczny' => 'uzywany',
                 'kategoria' => 'Lasery budowlane i niwelatory',
                 'upust' => 20,
+                'ilosc_wypozyczen' => rand(10, 200),
             ],
         ]);
     }
