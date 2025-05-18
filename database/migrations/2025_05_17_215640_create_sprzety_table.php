@@ -22,7 +22,6 @@ return new class extends Migration
             $table->enum('stan_techniczny', ['nowy', 'uzywany', 'naprawa']);
             $table->string('kategoria');
             $table->integer('upust')->nullable();
-            $table->timestamps();
         });
     }
 
