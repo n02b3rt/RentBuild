@@ -7,8 +7,7 @@
             <nav class="flex items-center space-x-6">
                 <a href="#" class="hover:text-brand">O nas</a>
                 <a href="#" class="hover:text-brand">Kontakt</a>
-                <a href="#" class="hover:text-brand">Sprzęt</a>
-                <a href="#" class="hover:text-brand">Oferta</a>
+                <a href="{{ route('sprzety.index') }}" class="hover:text-brand">Oferta</a>
 
                 @auth
                     <!-- User Dropdown -->
@@ -56,11 +55,10 @@
             <button id="mobile-menu-toggle" class="text-2xl">☰</button>
         </div>
 
-        <div id="mobile-menu" class="hidden flex-col px-4 pb-4 space-y-2">
+        <div id="mobile-menu" class="hidden grid gap-4 px-4 pb-4">
             <a href="#" class="hover:text-brand">O nas</a>
             <a href="#" class="hover:text-brand">Kontakt</a>
-            <a href="#" class="hover:text-brand">Sprzęt</a>
-            <a href="#" class="hover:text-brand">Oferta</a>
+            <a href="{{ route('sprzety.index') }}" class="hover:text-brand">Oferta</a>
 
             @auth
                 <a href="{{ route('dashboard') }}" class="hover:text-brand">Dashboard</a>
@@ -70,8 +68,20 @@
                     <button type="submit" class="hover:text-brand">Wyloguj się</button>
                 </form>
             @else
-                <a href="{{ route('login') }}" class="bg-brand text-white px-4 py-2 rounded hover:bg-orange-700">Zaloguj się</a>
+                <a href="{{ route('login') }}" class="hover:text-brand">Zaloguj się</a>
             @endauth
         </div>
     </header>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButton = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        toggleButton.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+        });
+    });
+</script>
+
