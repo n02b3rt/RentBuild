@@ -42,10 +42,31 @@ class SprzetController extends Controller
             $query->where('kategoria', $request->kategoria);
         }
 
-        $sprzety = $query->paginate(10);
+        // Sortowanie
+        if ($request->filled('sortuj')) {
+            switch ($request->sortuj) {
+                case 'cena_asc':
+                    $query->orderBy('cena_wynajmu', 'asc');
+                    break;
+                case 'cena_desc':
+                    $query->orderBy('cena_wynajmu', 'desc');
+                    break;
+                case 'wypozyczenia_desc':
+                    $query->orderBy('ilosc_wypozyczen', 'desc');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('created_at', 'desc'); // domyślne
+        }
+
+        $sprzety = $query->paginate(10)->appends($request->query());
 
         return view('sprzety.index', compact('sprzety', 'kategorie', 'maxPrice'));
     }
+
 
     public function show($id)
     {
