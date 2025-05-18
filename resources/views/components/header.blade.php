@@ -27,6 +27,6 @@
         <a href="#" class="hover:text-brand">Kontakt</a>
         <a href="#" class="hover:text-brand">Sprzęt</a>
         <a href="#" class="hover:text-brand">Oferta</a>
-        <a href="#" class="bg-brand text-white px-4 py-2 rounded hover:bg-orange-700">Zaloguj się</a>
+        <a href="/login" class="bg-brand text-white px-4 py-2 rounded hover:bg-orange-700">Zaloguj się</a>
     </div>
 </header>

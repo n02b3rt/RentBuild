@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SprzetSeeder::class,
+            UsersTableSeeder::class,
         ]);
     }
 
