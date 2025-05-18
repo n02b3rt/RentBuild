@@ -26,4 +26,34 @@
             Jeśli do budowy, remontu czy montażu potrzebujesz sprzętu, który nie jest niezbędny na co dzień – wypożycz go. Po co kupować coś, co przyda się tylko raz?
         </p>
     </section>
+
+    @include('components.features-section')
+
+    @php
+        $faqs = [
+            [
+                'question' => 'Jaki jest koszt wynajmu sprzętu?',
+                'answer' => "Stawki za wynajem sprzętów (zgrzewarka, zaciskarka...) różnią się pomiędzy marketami.\nKoszt zależy od rodzaju sprzętu oraz zadeklarowanego czasu najmu."
+            ],
+            [
+                'question' => 'Jakie są warunki wynajmu sprzętu?',
+                'answer' => "Różnią się w zależności od sprzętu.\nNa przykładzie przyczepy:\n- Nie ma możliwości rezerwacji\n- Wymagane 2 dokumenty\n- Trzeba oddać w tym samym miejscu"
+            ],
+            [
+                'question' => 'Jakie są formalności przy wynajmie sprzętu?',
+                'answer' => "Umowa najmu określająca warunki użytkowania i zwrotu sprzętu."
+            ],
+        ];
+    @endphp
+
+    {{-- Most Rented Section --}}
+    <x-most-rented />
+
+    {{-- FAQ Section --}}
+    <x-faq-accordion :faqs="$faqs" />
+
+
+
+
+
 @endsection
