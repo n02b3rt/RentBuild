@@ -93,4 +93,20 @@ php artisan tinker
 ```
 tutaj wyświetla się baza
 
+### Rejestracja i weryfikacja konta
+Po rejestracji zobaczysz ekran proszący o weryfikację adresu email.
+
+Domyślnie Laravel wysyła link weryfikacyjny mailem, ale:
+Możesz zobaczyć link weryfikacyjny w logach:
+Zajrzyj do pliku:
+
+```bash
+storage/logs/laravel.log
+```
+Znajdziesz tam URL typu:
+
+```bash
+http://localhost:8000/email/verify/{user_id}/{token}
+```
+Kliknij go lub wklej do przeglądarki, by aktywować konto.
 
