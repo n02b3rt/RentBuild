@@ -11,7 +11,7 @@
 
         {{-- PRAWA KOLUMNA --}}
         <div class="bg-cover bg-center bg-no-repeat h-full"
-             style="background-image: url('/images/heroImage.jpg'); min-height: 250px;">
+             style="background-image: url('/public/images/heroImage.jpg'); min-height: 250px;">
             {{-- Można też zrobić <img src="/images/koparka.jpg" class="object-cover w-full h-full" /> jeśli wolisz --}}
         </div>
     </section>

@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprzetController;
+use App\Http\Controllers\ClientRentalController;
+use App\Http\Controllers\AdminRentalController;
+
 
 Route::get('/', function () {
     return view('home');
@@ -32,5 +35,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin.dashboard');
 });
 
+// Panel klienta – wypożyczenia
+Route::middleware(['auth', 'verified'])->prefix('client')->group(function () {
+    Route::get('/rentals', [ClientRentalController::class, 'index'])->name('client.rentals.index');
+    Route::post('/rentals', [ClientRentalController::class, 'store'])->name('client.rentals.store');
+    Route::get('/rentals/{rental}', [ClientRentalController::class, 'show'])->name('client.rentals.show');
+    Route::post('/rentals/{rental}/return', [ClientRentalController::class, 'return'])->name('client.rentals.return');
+    Route::post('/rentals/{rental}/cancel', [ClientRentalController::class, 'cancel'])->name('client.rentals.cancel');
+});
+
+// Panel admina – wypożyczenia
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    Route::get('/rentals', [AdminRentalController::class, 'index'])->name('admin.rentals.index');
+    Route::get('/rentals/{rental}/edit', [AdminRentalController::class, 'edit'])->name('admin.rentals.edit');
+    Route::put('/rentals/{rental}', [AdminRentalController::class, 'update'])->name('admin.rentals.update');
+});
 
 require __DIR__.'/auth.php';
