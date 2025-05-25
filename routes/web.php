@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EquipmentController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
+Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
