@@ -7,7 +7,7 @@
             <nav class="flex items-center space-x-6">
                 <a href="#" class="hover:text-brand">O nas</a>
                 <a href="#" class="hover:text-brand">Kontakt</a>
-                <a href="#" class="hover:text-brand">Oferta</a>
+                <a href="{{ route('equipments.index') }}" class="hover:text-brand">Oferta</a>
 
                 @auth
                     <!-- User Dropdown -->
@@ -58,7 +58,7 @@
         <div id="mobile-menu" class="hidden grid gap-4 px-4 pb-4">
             <a href="#" class="hover:text-brand">O nas</a>
             <a href="#" class="hover:text-brand">Kontakt</a>
-            <a href="#" class="hover:text-brand">Oferta</a>
+            <a href="{{ route('equipments.index') }}" class="hover:text-brand">Oferta</a>
 
             @auth
                 <a href="{{ route('dashboard') }}" class="hover:text-brand">Dashboard</a>
