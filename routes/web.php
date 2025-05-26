@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EquipmentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PromotionController;
 
 
 Route::get('/', function () {
@@ -19,6 +20,11 @@ Route::get('/dashboard', function () {
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('admin.dashboard');
+
+Route::prefix('admin/dashboard')->name('admin.')->group(function () {
+    // Strona z wszystkimi promocjami pogrupowanymi po kategoriach
+    Route::get('promotions/category', [PromotionController::class, 'index'])->name('promotions.category');
+});
 
 
 Route::middleware('auth')->group(function () {
