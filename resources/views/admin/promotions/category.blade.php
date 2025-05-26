@@ -1,8 +1,11 @@
 @extends('layouts.admin')
 
 @section('admin-content')
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold mb-4">Wszystkie promocje w kategoriach</h1>
+    <div class="container mx-auto">
+        <div class="flex w-full">
+            <h1 class="w-4/5 text-3xl font-bold mb-4">Wszystkie promocje w kategoriach</h1>
+            <a href="{{ route('admin.promotions.add') }}" class="w-1/5 h-fit text-right bg-[#f56600] text-white font-bold rounded py-2 px-4"> Dodaj promocje</a>
+        </div>
 
         @foreach ($promotionsByCategory as $categories => $promotions)
             <div class="mb-4">
