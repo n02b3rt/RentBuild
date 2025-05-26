@@ -16,7 +16,7 @@
             <a href="#" id="users" class="block px-4 py-2 text-white border-b-[1px] border-white rounded  transition">Promocje</a>
             <ul id="submenu-users" class="submenu pl-4 bg-white space-y-2 max-h-0 overflow-hidden transition-all duration-200 ease-in-out">
                 <li><a href="{{ route('admin.promotions.category') }}" class="block px-4 py-2 text-[#f56600] border-b-[1px] border-[#f56600] transition">Na kategorie</a></li>
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] transition">{Miejsce na tekst}</a></li>
+                <li><a href="" class="block px-4 py-2 text-[#f56600] transition">{Miejsce na tekst}</a></li>
             </ul>
         </li>
         <li class="menu-item">
