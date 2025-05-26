@@ -21,9 +21,11 @@ return new class extends Migration
             $table->string('folder_photos');
             $table->enum('technical_state', ['nowy', 'uzywany', 'naprawa']);
             $table->string('category');
-            $table->unsignedInteger('discount')->nullable();
+            $table->enum('promotion_type', ['kategoria', 'pojedyncza'])->nullable(); // Typ promocji
+            $table->unsignedInteger('discount')->nullable(); // Domyślny rabat dla produktu
+            $table->dateTime('start_datetime')->nullable(); // Data rozpoczęcia promocji
+            $table->dateTime('end_datetime')->nullable();   // Data zakończenia promocji
             $table->unsignedInteger('number_of_rentals');
-            $table->timestamps();
         });
     }
 

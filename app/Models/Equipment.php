@@ -8,6 +8,7 @@ class Equipment extends Model
 {
     protected $table = 'equipment';
 
+    // Ustawienie kolumn, które mogą być masowo przypisane
     protected $fillable = [
         'name',
         'description',
@@ -17,12 +18,12 @@ class Equipment extends Model
         'folder_photos',
         'technical_state',
         'category',
+        'promotion_type',
         'discount',
+        'start_datetime',
+        'end_datetime',
         'number_of_rentals',
     ];
-
-    // Jeśli nie używasz timestampów (created_at, updated_at), ustaw:
-    public $timestamps = false;
 
     // Przykładowa metoda pomocnicza
     public function isAvailable(): bool
@@ -38,9 +39,9 @@ class Equipment extends Model
         return $this->rental_price;
     }
 
+    // Relacja z modelem Rental
     public function rentals()
     {
         return $this->hasMany(Rental::class);
     }
-
 }
