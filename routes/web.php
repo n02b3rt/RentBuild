@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EquipmentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientRentalController;
 
 
 Route::get('/', function () {
@@ -19,6 +20,14 @@ Route::get('/dashboard', function () {
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('admin.dashboard');
+
+Route::post('/client/rentals', [ClientRentalController::class, 'store'])
+    ->middleware('auth')
+    ->name('client.rentals.store');
+
+Route::get('/client/rentals/summary/{equipment}', [ClientRentalController::class, 'summary'])
+    ->middleware('auth')
+    ->name('client.rentals.summary');
 
 
 Route::middleware('auth')->group(function () {
