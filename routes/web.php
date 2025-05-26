@@ -28,6 +28,10 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
     Route::get('promotions/category', [PromotionController::class, 'index'])->name('promotions.category');
 });
 
+Route::delete('admin/dashboard/promotions/category/{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])
+    ->name('admin.promotions.delete');
+
+
 Route::prefix('admin/dashboard')->name('admin.')->group(function () {
     // Form (GET)
     Route::get('promotions/category/add', [PromotionAddController::class, 'create'])->name('promotions.add');

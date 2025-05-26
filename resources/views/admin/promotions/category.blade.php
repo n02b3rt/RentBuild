@@ -53,6 +53,14 @@
                             @endforeach
                             </tbody>
                         </table>
+                    <form method="POST" action="{{ route('admin.promotions.delete', ['category' => trim(explode(',', $categories)[0])]) }}" onsubmit="return confirm('Na pewno chcesz usunąć promocję dla tej kategorii?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="mt-2 text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                            Usuń promocję
+                        </button>
+                    </form>
+
                 </div>
             </div>
         @endforeach
