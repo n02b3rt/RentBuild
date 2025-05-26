@@ -42,4 +42,19 @@ class PromotionController extends Controller
         // Renderujemy widok 'admin.promotions.category' z pogrupowanymi promocjami
         return view('admin.promotions.category', compact('promotionsByCategory'));
     }
+
+    public function destroyCategoryPromotion($category)
+    {
+        Equipment::where('category', $category)
+            ->where('promotion_type', 'kategoria')
+            ->update([
+                'promotion_type' => null,
+                'discount' => null,
+                'start_datetime' => null,
+                'end_datetime' => null,
+            ]);
+
+        return redirect()->route('admin.promotions.category')->with('success', "Promocja dla kategorii '{$category}' została usunięta.");
+    }
+
 }
