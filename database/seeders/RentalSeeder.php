@@ -10,7 +10,7 @@ class RentalSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('rentals')->insert([
+        $rentals = [
             [
                 'user_id' => 2,
                 'equipment_id' => 6,
@@ -19,8 +19,8 @@ class RentalSeeder extends Seeder
                 'status' => 'zaplanowane',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_1',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'with_operator' => true,
+                'daily_price' => 500,
             ],
             [
                 'user_id' => 3,
@@ -30,8 +30,8 @@ class RentalSeeder extends Seeder
                 'status' => 'aktywne',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_2',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'with_operator' => false,
+                'daily_price' => 600,
             ],
             [
                 'user_id' => 3,
@@ -41,8 +41,8 @@ class RentalSeeder extends Seeder
                 'status' => 'zakończone',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_3',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'with_operator' => true,
+                'daily_price' => 450,
             ],
             [
                 'user_id' => 5,
@@ -52,8 +52,8 @@ class RentalSeeder extends Seeder
                 'status' => 'anulowane',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_4',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'with_operator' => false,
+                'daily_price' => 700,
             ],
             [
                 'user_id' => 6,
@@ -63,9 +63,26 @@ class RentalSeeder extends Seeder
                 'status' => 'reklamacja',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_5',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'with_operator' => true,
+                'daily_price' => 400,
             ],
-        ]);
+        ];
+
+        foreach ($rentals as &$rental) {
+            $start = Carbon::parse($rental['start_date']);
+            $end = Carbon::parse($rental['end_date']);
+            $days = $start->diffInDays($end) + 1;
+
+            $equipmentCost = $days * $rental['daily_price'];
+            $operatorCost = $rental['with_operator'] ? $days * 350 : 0;
+
+            $rental['total_price'] = $equipmentCost + $operatorCost;
+            $rental['created_at'] = now();
+            $rental['updated_at'] = now();
+
+            unset($rental['daily_price']); // niepotrzebne przy insert
+        }
+
+        DB::table('rentals')->insert($rentals);
     }
 }

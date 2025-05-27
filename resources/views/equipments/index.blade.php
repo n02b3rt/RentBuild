@@ -169,7 +169,7 @@
                                                 <span class="line-through text-red-500">{{ number_format($equipment->rental_price, 2) }} zł</span>
                                                 <span class="text-gray-500"> cena z 30 dni</span>
                                             </p>
-                                            <p class="text-4xl blod">{{ number_format($equipment->rental_price * (1 - $equipment->discount / 100), 2) }} zł</p>
+                                            <p class="text-4xl blod">{{ number_format($equipment->finalPrice(), 2) }} zł</p>
                                         </div>
                                     @else
                                         <p class="text-4xl blod">Cena: {{ number_format($equipment->rental_price, 2) }} zł</p>

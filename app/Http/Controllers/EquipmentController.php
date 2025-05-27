@@ -54,12 +54,7 @@ class EquipmentController extends Controller
                 case 'wypozyczenia_desc':
                     $query->orderBy('number_of_rentals', 'desc');
                     break;
-                default:
-                    $query->orderBy('created_at', 'desc');
-                    break;
             }
-        } else {
-            $query->orderBy('created_at', 'desc');
         }
 
         $equipments = $query->paginate(10)->appends($request->query());

@@ -14,6 +14,13 @@ class Rental extends Model
         'status',
         'notes',
         'payment_reference',
+        'total_price',
+        'with_operator',
+    ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function user()
@@ -30,5 +37,4 @@ class Rental extends Model
     {
         return $this->hasOne(Payment::class);
     }
-
 }
