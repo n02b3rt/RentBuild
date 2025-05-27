@@ -48,27 +48,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Panel admina - trasy wymagające uprawnień administratora
-Route::middleware(['auth', 'verified', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    // Dashboard admina
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->name('admin.dashboard');
 
-    // Promocje
-    Route::prefix('promotions')->name('promotions.')->group(function () {
-        // Lista promocji pogrupowanych po kategoriach
-        Route::get('category', [PromotionController::class, 'index'])->name('category');
+// ===== Promocje =====
 
-        // Usuwanie promocji z kategorii
-        Route::delete('category/{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])
-            ->name('delete');
+Route::prefix('admin/dashboard')->name('admin.')->group(function () {
+    // Strona z wszystkimi promocjami pogrupowanymi po kategoriach
+    Route::get('promotions/category', [PromotionController::class, 'index'])->name('promotions.category');
+});
 
-        // Dodawanie promocji - formularz i zapis
-        Route::get('category/add', [PromotionAddController::class, 'create'])->name('add');
-        Route::post('category/add', [PromotionAddController::class, 'store'])->name('store');
-    });
+Route::delete('admin/dashboard/promotions/category/{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])
+    ->name('admin.promotions.delete');
+
+
+Route::prefix('admin/dashboard')->name('admin.')->group(function () {
+    // Form (GET)
+    Route::get('promotions/category/add', [PromotionAddController::class, 'create'])->name('promotions.add');
+
+    // Submit form (POST)
+    Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
 });
 
 require __DIR__.'/auth.php';
