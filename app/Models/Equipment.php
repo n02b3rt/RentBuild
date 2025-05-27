@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Equipment extends Model
 {
+    // Jeśli tabela w bazie danych nazywa się inaczej, to ją określamy
     protected $table = 'equipment';
 
+    // Określenie, które kolumny mogą być masowo przypisane
     protected $fillable = [
         'name',
         'description',
@@ -17,11 +19,13 @@ class Equipment extends Model
         'folder_photos',
         'technical_state',
         'category',
+        'promotion_type',
         'discount',
+        'start_datetime',
+        'end_datetime',
         'number_of_rentals',
     ];
 
-    // Jeśli nie używasz timestampów (created_at, updated_at), ustaw:
     public $timestamps = false;
 
     // Przykładowa metoda pomocnicza
@@ -38,9 +42,10 @@ class Equipment extends Model
         return $this->rental_price;
     }
 
+    // Relacja z modelem Rental
     public function rentals()
     {
         return $this->hasMany(Rental::class);
     }
-
 }
+
