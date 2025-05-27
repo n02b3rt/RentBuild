@@ -11,7 +11,6 @@ class RentalSeeder extends Seeder
     public function run(): void
     {
         $rentals = [
-            // Jan Kowalski - różne wypożyczenia
             [
                 'user_id' => 1,
                 'equipment_id' => 1,
@@ -28,7 +27,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 2,
                 'start_date' => '2025-05-20',
                 'end_date' => '2025-05-25',
-                'status' => 'trwajace',
+                'status' => 'aktualne',
                 'notes' => 'Z operatorem',
                 'payment_reference' => 'token_jk_2',
                 'with_operator' => true,
@@ -50,7 +49,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 4,
                 'start_date' => '2025-04-01',
                 'end_date' => '2025-04-07',
-                'status' => 'zakonczone',
+                'status' => 'przeszle',
                 'notes' => 'Bez problemów',
                 'payment_reference' => 'token_jk_4',
                 'with_operator' => true,
@@ -61,7 +60,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 5,
                 'start_date' => '2025-05-05',
                 'end_date' => '2025-05-06',
-                'status' => 'anulowane',
+                'status' => 'przeszle',
                 'notes' => 'Klient anulował',
                 'payment_reference' => 'token_jk_5',
                 'with_operator' => false,
@@ -72,7 +71,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 6,
                 'start_date' => '2025-05-02',
                 'end_date' => '2025-05-03',
-                'status' => 'reklamacja',
+                'status' => 'przeszle',
                 'notes' => 'Sprzęt uszkodzony',
                 'payment_reference' => 'token_jk_6',
                 'with_operator' => false,
@@ -83,7 +82,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 6,
                 'start_date' => '2025-05-18',
                 'end_date' => '2025-05-25',
-                'status' => 'zaplanowane',
+                'status' => 'oczekujace',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_1',
                 'with_operator' => true,
@@ -94,7 +93,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 9,
                 'start_date' => '2025-05-04',
                 'end_date' => '2025-05-05',
-                'status' => 'aktywne',
+                'status' => 'aktualne',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_2',
                 'with_operator' => false,
@@ -105,7 +104,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 2,
                 'start_date' => '2025-04-28',
                 'end_date' => '2025-05-05',
-                'status' => 'zakończone',
+                'status' => 'przeszle',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_3',
                 'with_operator' => true,
@@ -116,7 +115,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 3,
                 'start_date' => '2025-05-08',
                 'end_date' => '2025-05-12',
-                'status' => 'anulowane',
+                'status' => 'przeszle',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_4',
                 'with_operator' => false,
@@ -127,7 +126,7 @@ class RentalSeeder extends Seeder
                 'equipment_id' => 4,
                 'start_date' => '2025-05-14',
                 'end_date' => '2025-05-15',
-                'status' => 'reklamacja',
+                'status' => 'przeszle',
                 'notes' => 'Brak uwag',
                 'payment_reference' => 'token_5',
                 'with_operator' => true,
@@ -147,7 +146,7 @@ class RentalSeeder extends Seeder
             $rental['created_at'] = now();
             $rental['updated_at'] = now();
 
-            unset($rental['daily_price']); // niepotrzebne przy insert
+            unset($rental['daily_price']);
         }
 
         DB::table('rentals')->insert($rentals);

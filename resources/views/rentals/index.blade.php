@@ -8,9 +8,9 @@
 
         @php
             $pendingRentals = $rentals->where('status', 'oczekujace');
-            $currentRentals = $rentals->where('status', 'trwajace');
+            $currentRentals = $rentals->where('status', 'aktualne');
             $futureRentals = $rentals->where('status', 'nadchodzace');
-            $finishedRentals = $rentals->where('status', 'zakonczone');
+            $finishedRentals = $rentals->where('status', 'przeszle');
         @endphp
 
         {{-- Oczekujące --}}
