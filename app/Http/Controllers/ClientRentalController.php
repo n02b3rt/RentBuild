@@ -32,9 +32,9 @@ class ClientRentalController extends Controller
         $equipmentCost = round($days * $dailyPrice, 2);
 
         $withOperator = $request->has('with_operator');
-        $operatorCost = $withOperator ? $days * 350 : 0;
+        $operatorCost = $withOperator ? round($days * 350, 2) : 0;
 
-        $totalPrice = $equipmentCost + $operatorCost;
+        $totalPrice = round($equipmentCost + $operatorCost, 2);
 
         session([
             'rental_data' => [
@@ -50,16 +50,11 @@ class ClientRentalController extends Controller
         return redirect()->route('client.rentals.payment');
     }
 
-
-
-
-
     public function index()
     {
         $rentals = Rental::with('equipment')->where('user_id', Auth::id())->latest()->get();
         return view('rentals.index', compact('rentals'));
     }
-
 
     public function summary(Equipment $equipment)
     {
@@ -90,7 +85,6 @@ class ClientRentalController extends Controller
         return view('rentals.payment', compact('rental'));
     }
 
-
     public function processPayment(Request $request)
     {
         $data = session('rental_data');
@@ -111,7 +105,7 @@ class ClientRentalController extends Controller
             return redirect()->route('client.rentals.topup')->with('not_enough', true);
         }
 
-        $user->account_balance -= $data['total_price'];
+        $user->account_balance = round($user->account_balance - $data['total_price'], 2);
         $user->save();
 
         $rental = Rental::create([
@@ -153,27 +147,19 @@ class ClientRentalController extends Controller
         $end = Carbon::parse($rental->end_date);
 
         if ($status === 'oczekujace') {
-            //full refund
-            $refundAmount = $rental->total_price;
-
-        } else{
+            $refundAmount = round($rental->total_price, 2);
+        } else {
             if ($now->lt($start)) {
-               // 80% refund
                 $refundAmount = round($rental->total_price * 0.8, 2);
-
             } elseif ($now->between($start, $end)) {
-                // refund for unused days
                 $usedDays = $start->diffInDays($now) + 1;
                 $totalDays = $start->diffInDays($end) + 1;
                 $dailyRate = $rental->total_price / $totalDays;
                 $refundAmount = round($dailyRate * ($totalDays - $usedDays), 2);
-
             }
-
         }
 
-
-        $user->account_balance += $refundAmount;
+        $user->account_balance = round($user->account_balance + $refundAmount, 2);
         $user->save();
 
         $rental->status = 'anulowane';
@@ -185,27 +171,51 @@ class ClientRentalController extends Controller
             $equipment->save();
         }
 
-        return redirect()->route('client.rentals.index')->with('success', "Wypożyczenie anulowane. Zwrot: {$refundAmount} zł.");
+        return redirect()->route('client.rentals.index')
+            ->with('success', "Wypożyczenie anulowane. Zwrot: " . number_format($refundAmount, 2) . " zł.");
     }
 
-    public function end(Rental $rental){
+    public function end(Rental $rental)
+    {
+        if ($rental->status === 'zrealizowane') {
+            return redirect()->route('client.rentals.index')
+                ->with('info', 'To wypożyczenie jest już zakończone.');
+        }
+
+        $now = Carbon::now();
+        $end = $rental->end_date;
+        $user = $rental->user;
+        $equipment = $rental->equipment;
 
         $rental->status = 'zrealizowane';
         $rental->save();
 
-        $equipment = $rental->equipment;
-        // TO DO karaaaaaaa
         if ($equipment) {
             $equipment->availability = 'dostepny';
             $equipment->number_of_rentals = ($equipment->number_of_rentals ?? 0) + 1;
-
             $equipment->save();
         }
 
+        $penalty = 0;
+        if (!$rental->with_operator && $now->gt($end)) {
+            $lateDays = $end->diffInDays($now);
+            $dailyPenaltyRate = $equipment->rental_price ?? 0;
+            $penalty = round($dailyPenaltyRate * $lateDays, 2);
 
+            $user->account_balance = round(($user->account_balance ?? 0) - $penalty, 2);
+            $user->save();
+        }
+
+        $message = "Wypożyczenie zakończone.";
+
+        if ($penalty > 0) {
+            $message .= " Naliczono karę za niezwrócenie sprzętu w terminie: " . number_format($penalty, 2) . " zł.";
+            return redirect()->route('client.rentals.index')->withErrors($message);
+        } elseif ($rental->with_operator) {
+            $message .= " Nie naliczono kary – sprzęt był wypożyczony z operatorem.";
+        }
+
+        return redirect()->route('client.rentals.index')->with('success', $message);
     }
-
-
-
 
 }
