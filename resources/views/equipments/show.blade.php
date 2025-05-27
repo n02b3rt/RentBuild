@@ -2,10 +2,27 @@
 
 @section('content')
     <section class="max-w-[1140px] mx-auto px-4 py-12">
-        <div class="flex bg-white p-10 rounded-md shadow-md">
-            <div class="max-h-[500px] w-1/2">
+        <div class="flex  bg-white p-10 rounded-md shadow-md">
+            <div class="max-h-[500px] mr-14 w-1/2">
                 <h1 class="text-4xl font-bold mb-4 text-center">{{ $equipment->name }}</h1>
-                <img src="/{{ $equipment->thumbnail }}" alt="{{ $equipment->name }}" class="mb-6 h-[400px] w-auto mx-auto">
+                <div id="slider" class="relative w-full max-w-xl mx-auto">
+                    <img id="slider-image"
+                         src="/{{ $equipment->thumbnail }}"
+                         class="h-[400px] w-auto mx-auto rounded shadow mb-4"
+                         alt="Zdjęcie sprzętu">
+
+                    @if(count($additionalPhotos) > 0)
+                        <button onclick="prevSlide()"
+                                class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black/50 text-white px-3 py-1 rounded-l">
+                            ‹
+                        </button>
+
+                        <button onclick="nextSlide()"
+                                class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black/50 text-white px-3 py-1 rounded-r">
+                            ›
+                        </button>
+                    @endif
+                </div>
             </div>
 
             <div class="w-1/2 flex flex-col justify-center">
@@ -65,3 +82,56 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const photos = [
+                '/{{ $equipment->thumbnail }}',
+                @foreach($additionalPhotos as $photo)
+                    '{{ $photo }}',
+                @endforeach
+            ];
+
+            console.log('Photos array:', photos); // logujemy tablicę
+
+            let current = 0;
+
+            function showSlide(index) {
+                console.log('Trying to show slide index:', index);
+                const img = document.getElementById('slider-image');
+                if (!img) {
+                    console.error('Slider image element not found!');
+                    return;
+                }
+
+                if (!photos[index]) {
+                    console.warn('No photo at index:', index);
+                    return;
+                }
+
+                console.log('Setting image source to:', photos[index]);
+                img.src = photos[index];
+            }
+
+            function nextSlide() {
+                current = (current + 1) % photos.length;
+                console.log('Next slide:', current);
+                showSlide(current);
+            }
+
+            function prevSlide() {
+                current = (current - 1 + photos.length) % photos.length;
+                console.log('Previous slide:', current);
+                showSlide(current);
+            }
+
+            window.nextSlide = nextSlide;
+            window.prevSlide = prevSlide;
+
+            showSlide(current); // inicjalizacja
+        });
+    </script>
+
+@endpush
+

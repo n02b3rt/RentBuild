@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class EquipmentController extends Controller
 {
@@ -65,6 +66,9 @@ class EquipmentController extends Controller
     public function show($id)
     {
         $equipment = Equipment::findOrFail($id);
-        return view('equipments.show', compact('equipment'));
+        $additionalPhotos = $equipment->galleryPhotos();
+
+        return view('equipments.show', compact('equipment', 'additionalPhotos'));
     }
+
 }
