@@ -4,9 +4,11 @@ use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
 
-// Publiczne trasy
+// Strony publiczne
 Route::get('/', function () {
     return view('welcome');
 });
@@ -14,10 +16,10 @@ Route::get('/', function () {
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
 
-// Trasy wymagające uwierzytelnienia
-Route::middleware('auth')->group(function () {
+// Trasy wymagające uwierzytelnienia i weryfikacji emaila
+Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard
+    // Dashboard użytkownika
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -43,6 +45,29 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+});
+
+// Panel admina - trasy wymagające uprawnień administratora
+Route::middleware(['auth', 'verified', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
+
+    // Dashboard admina
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // Promocje
+    Route::prefix('promotions')->name('promotions.')->group(function () {
+        // Lista promocji pogrupowanych po kategoriach
+        Route::get('category', [PromotionController::class, 'index'])->name('category');
+
+        // Usuwanie promocji z kategorii
+        Route::delete('category/{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])
+            ->name('delete');
+
+        // Dodawanie promocji - formularz i zapis
+        Route::get('category/add', [PromotionAddController::class, 'create'])->name('add');
+        Route::post('category/add', [PromotionAddController::class, 'store'])->name('store');
     });
 });
 
