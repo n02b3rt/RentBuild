@@ -119,7 +119,7 @@ class ClientRentalController extends Controller
             'equipment_id' => $equipment->id,
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
-            'status' => 'aktywne',
+            'status' => 'oczekujace',
             'notes' => $data['notes'],
             'payment_reference' => 'fake_payment_token_' . uniqid(),
             'total_price' => $data['total_price'],
