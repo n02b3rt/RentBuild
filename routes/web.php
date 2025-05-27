@@ -21,8 +21,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard użytkownika
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        return Redirect::route('client.rentals.index');
+    })->middleware(['auth', 'verified'])->name('dashboard');
 
     // Wypożyczenia klienta
     Route::prefix('client/rentals')->name('client.rentals.')->group(function () {
@@ -48,9 +48,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
