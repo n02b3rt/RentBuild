@@ -8,6 +8,8 @@ class CreateRentalsTable extends Migration
 {
     public function up(): void
     {
+        DB::statement("CREATE TYPE rental_status AS ENUM ('oczekujace', 'nadchodzace', 'aktualne', 'przeszle')");
+
         Schema::create('rentals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -24,5 +26,6 @@ class CreateRentalsTable extends Migration
     public function down(): void
     {
         Schema::dropIfExists('rentals');
+        DB::statement("DROP TYPE IF EXISTS rental_status");
     }
 }
