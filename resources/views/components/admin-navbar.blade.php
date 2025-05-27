@@ -1,74 +1,84 @@
-<!-- resources/views/components/admin-navbar.blade.php -->
-<nav class="admin-nav shadow-lg bg-[#f56600] h-[404px] mr-8 font-bold" id="admin-nav">
-    <ul class="border-b-[1px] border-white w-72">
+{{-- MOBILE BURGER --}}
+<div class="md:hidden flex justify-between items-center bg-[#f56600] px-4 py-3 text-white font-bold">
+    <span>Panel admina</span>
+    <button id="burger-btn">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+</div>
+
+{{-- RESPONSYWNE MENU --}}
+<nav id="admin-nav"
+     class="admin-nav bg-[#f56600] md:mr-8 md:mb-10 md:w-72 text-white font-bold
+            hidden md:block md:max-h-[calc(500px-5rem)] md:overflow-y-auto transition-all duration-300">
+
+
+    <ul class="w-full md:border-b-[1px] md:border-white space-y-0 md:space-y-0" id="admin-menu">
         <li class="menu-item border-b-[1px] border-white">
-            <a href="{{ route('admin.dashboard') }}" id="dashboard" class="block px-4 py-4 text-white border-b-[1px] border-white rounded  transition">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}"
+               class="block px-4 py-4 border-b border-white transition">Dashboard</a>
         </li>
+
         <li class="menu-item border-b-[1px] border-white">
-            <a href="#" id="settings" class="block px-4 py-2 text-white border-b-[1px] border-white rounded  transition">Sprzęty</a>
-            <ul id="submenu-settings" class="submenu pl-4 bg-white space-y-2 max-h-0 overflow-hidden transition-all duration-200 ease-in-out">
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] border-b-[1px] border-[#f56600] transition">{Miejsce na tekst}</a></li>
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] border-b-[1px] border-[#f56600] transition">{Miejsce na tekst}</a></li>
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] transition">{Miejsce na tekst}</a></li>
+            <a href="#" class="block px-4 py-2 border-b border-white transition">Sprzęty</a>
+            <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                <li><a href="{{ route('admin.equipment.create') }}"
+                       class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Dodaj sprzęt</a></li>
+                <li><a href="{{ route('admin.equipment.index') }}"
+                       class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Lista sprzętu</a></li>
             </ul>
         </li>
+
         <li class="menu-item border-b-[1px] border-white">
-            <a href="#" id="users" class="block px-4 py-2 text-white border-b-[1px] border-white rounded  transition">Promocje</a>
-            <ul id="submenu-users" class="submenu pl-4 bg-white space-y-2 max-h-0 overflow-hidden transition-all duration-200 ease-in-out">
-                <li><a href="{{ route('admin.promotions.category') }}" class="block px-4 py-2 text-[#f56600] border-b-[1px] border-[#f56600] transition">Na kategorie</a></li>
-                <li><a href="" class="block px-4 py-2 text-[#f56600] transition">{Miejsce na tekst}</a></li>
+            <a href="#" class="block px-4 py-2 border-b border-white transition">Promocje</a>
+            <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                <li><a href="{{ route('admin.promotions.category') }}"
+                       class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Na kategorie</a></li>
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="#" id="reports" class="block px-4 py-2 text-white border-b-[1px] border-white rounded  transition">Raporty</a>
-            <ul id="submenu-users" class="submenu pl-4 bg-white space-y-2 max-h-0 overflow-hidden transition-all duration-200 ease-in-out">
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] border-b-[1px] border-[#f56600] transition">{Miejsce na tekst}</a></li>
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] transition">{Miejsce na tekst}</a></li>
+
+        <li class="menu-item border-b-[1px] border-white">
+            <a href="#" class="block px-4 py-2 border-b border-white transition">Raporty</a>
+            <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                <li><a href="#" class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Coś tam</a></li>
             </ul>
         </li>
     </ul>
 </nav>
 
+{{-- SCRIPT --}}
 <script>
-    document.querySelectorAll('.menu-item > a').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault(); // Zatrzymuje domyślne działanie (np. przejście do strony)
+    // BURGER MENU TOGGLE (mobile)
+    document.addEventListener('DOMContentLoaded', function () {
+        const burger = document.getElementById('burger-btn');
+        const nav = document.getElementById('admin-nav');
 
-            // Zamknij wszystkie inne submenu
-            document.querySelectorAll('.submenu').forEach(submenu => {
-                if (!submenu.contains(item)) {
-                    submenu.classList.remove('max-h-40');
-                    submenu.classList.add('max-h-0');
-                }
+        burger?.addEventListener('click', () => {
+            nav.classList.toggle('hidden');
+        });
+
+        // Dropdown submenu
+        document.querySelectorAll('.menu-item > a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const submenu = this.parentElement.querySelector('.submenu');
+                if (!submenu) return;
+
+                // Zamykamy inne submenu
+                document.querySelectorAll('.submenu').forEach(sm => {
+                    if (sm !== submenu) {
+                        sm.classList.remove('max-h-40');
+                        sm.classList.add('max-h-0');
+                    }
+                });
+
+                submenu.classList.toggle('max-h-0');
+                submenu.classList.toggle('max-h-40');
             });
-
-            const parentMenuItem = item.parentElement;
-            const submenu = parentMenuItem.querySelector('.submenu');
-
-            // Toggle rozwinięcia submenu
-            if (submenu.classList.contains('max-h-0')) {
-                submenu.classList.remove('max-h-0');
-                submenu.classList.add('max-h-40'); // Wysokość dla rozwiniętego menu
-            } else {
-                submenu.classList.remove('max-h-40');
-                submenu.classList.add('max-h-0'); // Zwijanie menu
-            }
         });
     });
-
-    // Funkcja do obsługi sticky menu
-    window.onscroll = function() {
-        stickyNavbar();
-    };
-
-    const navbar = document.getElementById('admin-nav');
-    const stickyOffset = navbar.offsetTop;
-
-    function stickyNavbar() {
-        if (window.pageYOffset > stickyOffset) {
-            navbar.classList.add('sticky', 'top-[20px]', 'z-50');
-        } else {
-            navbar.classList.remove('sticky', 'top-0', 'z-50');
-        }
-    }
 </script>

@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('content')
+@section('admin-content')
     <div class="max-w-3xl mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Dodaj nowy sprzęt</h1>
 
@@ -20,19 +20,19 @@
             <div>
                 <label for="name" class="block font-medium mb-1">Nazwa</label>
                 <input type="text" name="name" required value="{{ old('name') }}"
-                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">
             </div>
 
             <div>
                 <label for="description" class="block font-medium mb-1">Opis</label>
                 <textarea name="description" rows="4" required
-                          class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">{{ old('description') }}</textarea>
+                          class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">{{ old('description') }}</textarea>
             </div>
 
             <div>
                 <label for="availability" class="block font-medium mb-1">Dostępność</label>
                 <select name="availability" required
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">
                     <option value="">-- Wybierz --</option>
                     <option value="dostepny" {{ old('availability') == 'dostepny' ? 'selected' : '' }}>Dostępny</option>
                     <option value="niedostepny" {{ old('availability') == 'niedostepny' ? 'selected' : '' }}>Niedostępny</option>
@@ -43,25 +43,25 @@
             <div>
                 <label for="rental_price" class="block font-medium mb-1">Cena wynajmu (zł)</label>
                 <input type="number" name="rental_price" step="0.01" required value="{{ old('rental_price') }}"
-                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">
             </div>
 
             <div>
                 <label for="thumbnail" class="block font-medium mb-1">Miniatura (1 plik)</label>
                 <input type="file" name="thumbnail" accept="image/*" required
-                       class="w-full rounded-lg border-gray-300 px-3 py-2 file:mr-4 file:rounded file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white">
+                       class="w-full rounded-lg border-gray-300 px-3 py-2 file:mr-4 file:rounded file:border-0 file:bg-[#f56600] file:px-4 file:py-2 file:text-white">
             </div>
 
             <div>
                 <label for="photos[]" class="block font-medium mb-1">Zdjęcia dodatkowe (można wiele)</label>
                 <input type="file" name="photos[]" multiple accept="image/*"
-                       class="w-full rounded-lg border-gray-300 px-3 py-2 file:mr-4 file:rounded file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white">
+                       class="w-full rounded-lg border-gray-300 px-3 py-2 file:mr-4 file:rounded file:border-0 file:bg-[#f56600] file:px-4 file:py-2 file:text-white">
             </div>
 
             <div>
                 <label for="technical_state" class="block font-medium mb-1">Stan techniczny</label>
                 <select name="technical_state" required
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">
                     <option value="">-- Wybierz --</option>
                     <option value="nowy" {{ old('technical_state') == 'nowy' ? 'selected' : '' }}>Nowy</option>
                     <option value="uzywany" {{ old('technical_state') == 'uzywany' ? 'selected' : '' }}>Używany</option>
@@ -78,7 +78,7 @@
                 </button>
 
                 <select id="existing-category"
-                        class="w-full hidden rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2 mb-2">
+                        class="w-full hidden rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2 mb-2">
                     <option value="">-- Wybierz istniejącą kategorię --</option>
                     @foreach(\App\Models\Equipment::select('category')->distinct()->pluck('category') as $cat)
                         <option value="{{ $cat }}">{{ $cat }}</option>
@@ -88,12 +88,12 @@
                 <input type="text" name="category" id="category"
                        placeholder="Wpisz kategorię"
                        value="{{ old('category') }}" required
-                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#f56600] focus:ring-[#f56600] px-4 py-2">
             </div>
 
             <div class="flex items-center gap-4 pt-4">
                 <button type="submit"
-                        class="inline-flex items-center rounded-lg bg-green-600 px-5 py-2 text-white hover:bg-green-700">
+                        class="inline-flex items-center rounded-lg bg-[#f56600]  px-5 py-2 text-white hover:bg-[#ff6900] ">
                     Dodaj sprzęt
                 </button>
                 <a href="{{ route('admin.equipment.index') }}"

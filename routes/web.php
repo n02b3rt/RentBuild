@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
+use App\Http\Controllers\Admin\AdminEquipmentController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
@@ -18,11 +19,6 @@ Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equi
 
 // Trasy wymagające uwierzytelnienia i weryfikacji emaila
 Route::middleware(['auth', 'verified'])->group(function () {
-
-    // Dashboard użytkownika
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
 
     // Wypożyczenia klienta
     Route::prefix('client/rentals')->name('client.rentals.')->group(function () {
@@ -54,7 +50,18 @@ Route::get('/dashboard', function () {
 
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
-})->name('admin.dashboard');
+})->middleware(['auth', 'verified'])->name('admin.dashboard');
+
+// Trasy admina dla sprzętu
+Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/equipment', [AdminEquipmentController::class, 'index'])->name('equipment.index');
+    Route::get('/equipment/create', [AdminEquipmentController::class, 'create'])->name('equipment.create');
+    Route::post('/equipment', [AdminEquipmentController::class, 'store'])->name('equipment.store');
+    Route::get('/equipment/{id}/edit', [AdminEquipmentController::class, 'edit'])->name('equipment.edit');
+    Route::put('/equipment/{id}', [AdminEquipmentController::class, 'update'])->name('equipment.update');
+    Route::delete('/equipment/{id}', [AdminEquipmentController::class, 'destroy'])->name('equipment.destroy');
+});
+
 
 // ===== Promocje =====
 

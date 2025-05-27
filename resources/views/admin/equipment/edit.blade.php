@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('content')
+@section('admin-content')
     <div class="max-w-3xl mx-auto py-8">
         <h1 class="text-2xl font-bold mb-6">Edytuj sprzęt: {{ $equipment->name }}</h1>
 

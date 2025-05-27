@@ -10,11 +10,19 @@ use Illuminate\Support\Str;
 
 class AdminEquipmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $equipments = Equipment::all();
+        $query = Equipment::query();
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'ilike', "%{$search}%"); // PostgreSQL - case-insensitive
+        }
+
+        $equipments = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
         return view('admin.equipment.index', compact('equipments'));
     }
+
 
     public function destroy($id)
     {
@@ -49,32 +57,32 @@ class AdminEquipmentController extends Controller
         $validated['end_datetime'] = null;
         $validated['number_of_rentals'] = 0;
 
-        // 🛠️ Tworzymy sprzęt bez zdjęć
-        $equipment = Equipment::create($validated);
+        $equipment = new Equipment($validated);
 
-        // 🔠 Tworzymy folder: nazwa-kategorii-bez-spacji + ID
         $categorySlug = str_replace(' ', '-', $equipment->category);
-        $folderName = $categorySlug . '-' . $equipment->id;
+        $folderName = $categorySlug . '-' . Str::uuid(); // UUID lepszy niż ID bo nie ma jeszcze ID
         $storageFolder = 'sprzety/' . $folderName;
 
-        // 🎯 Miniatura jako glowne.webp
         if ($request->hasFile('thumbnail')) {
             $thumbnailFile = $request->file('thumbnail');
             $thumbnailPath = $thumbnailFile->storeAs($storageFolder, 'glowne.webp', 'public');
             $equipment->thumbnail = 'storage/' . $thumbnailPath;
         }
 
-        // 📸 Dodatkowe zdjęcia
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $index => $photo) {
                 $photo->storeAs($storageFolder, 'photo_' . time() . '_' . $index . '.webp', 'public');
             }
+            $equipment->folder_photos = 'storage/' . $storageFolder . '/';
+        } else {
+            // Zapewnienie NOT NULL
             $equipment->folder_photos = 'storage/' . $storageFolder . '/';
         }
 
         $equipment->save();
 
         return redirect()->route('admin.equipment.index')->with('success', 'Sprzęt został dodany.');
+
     }
 
     public function edit($id)
