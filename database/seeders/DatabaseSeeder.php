@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             EquipmentSeeder::class,
             RentalSeeder::class,
             PaymentSeeder::class,
+            RentalJanSeeder::class,
         ]);
     }
 

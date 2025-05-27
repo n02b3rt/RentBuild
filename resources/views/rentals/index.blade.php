@@ -10,8 +10,23 @@
             $pendingRentals = $rentals->where('status', 'oczekujace');
             $currentRentals = $rentals->where('status', 'aktualne');
             $futureRentals = $rentals->where('status', 'nadchodzace');
-            $finishedRentals = $rentals->where('status', 'przeszle');
+            $finishedRentals = $rentals->where('status', 'zrealizowane');
         @endphp
+
+        @if(session('success'))
+            <div class="mb-6 p-4 bg-green-100 text-green-800 rounded font-semibold shadow">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="mb-6 p-4 bg-red-100 text-red-800 rounded font-semibold shadow">
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
+
 
         {{-- Oczekujące --}}
         <section class="mb-8 border rounded-lg shadow-sm">
@@ -36,13 +51,10 @@
                                 <p class="text-sm text-gray-700 italic">{{ $rental->notes ?? 'Brak uwag' }}</p>
                             </div>
                             <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                                <span class="px-3 py-1 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold">
-                                    {{ ucfirst($rental->status) }}
-                                </span>
                                 <span class="font-semibold text-yellow-700 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="#">
+                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}">
                                     @csrf
                                     <button type="submit"
                                             class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded transition">
@@ -79,13 +91,10 @@
                                 <p class="text-sm text-gray-700 italic">{{ $rental->notes ?? 'Brak uwag' }}</p>
                             </div>
                             <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                                <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold">
-                                    {{ ucfirst($rental->status) }}
-                                </span>
                                 <span class="font-semibold text-orange-600 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="#">
+                                <form method="POST" action="{{ route('client.rentals.end', $rental) }}">
                                     @csrf
                                     <button type="submit"
                                             class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded transition">
@@ -128,13 +137,10 @@
                                 <p class="text-sm text-gray-700 italic">{{ $rental->notes ?? 'Brak uwag' }}</p>
                             </div>
                             <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                                <span class="px-3 py-1 rounded-full bg-gray-200 text-gray-800 text-xs font-semibold">
-                                    {{ ucfirst($rental->status) }}
-                                </span>
                                 <span class="font-semibold text-blue-600 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="#">
+                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}">
                                     @csrf
                                     <button type="submit"
                                             class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded transition">

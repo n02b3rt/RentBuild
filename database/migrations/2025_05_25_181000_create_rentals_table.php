@@ -14,7 +14,7 @@ class CreateRentalsTable extends Migration
             $table->foreignId('equipment_id')->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->enum('status', ['oczekujace', 'nadchodzace', 'aktualne', 'przeszle']);
+            $table->enum('status', ['oczekujace', 'nadchodzace', 'aktualne', 'zrealizowane', 'anulowane']);
             $table->text('notes')->nullable(); // warunki, uwagi, reklamacje
             $table->string('payment_reference')->nullable(); // np. tokenizacja
             $table->timestamps();

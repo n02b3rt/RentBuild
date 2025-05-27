@@ -33,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/payment', [ClientRentalController::class, 'payment'])->name('payment');
         Route::post('/payment', [ClientRentalController::class, 'processPayment'])->name('processPayment');
+
+        Route::post('/{rental}/cancel', [ClientRentalController::class, 'cancel'])->name('cancel');
+        Route::post('/{rental}/end', [ClientRentalController::class, 'end'])->name('end');
     });
 
     // Konto klienta - doładowanie

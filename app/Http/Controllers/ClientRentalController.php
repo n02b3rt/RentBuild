@@ -134,6 +134,77 @@ class ClientRentalController extends Controller
         return redirect()->route('client.rentals.index')->with('success', 'Płatność została zaakceptowana, wypożyczenie aktywne.');
     }
 
+    public function cancel(Rental $rental)
+    {
+        $user = Auth::user();
+
+        if ($rental->user_id !== $user->id) {
+            abort(403, 'Brak dostępu do tego wypożyczenia.');
+        }
+
+        if ($rental->status === 'zrealizowane' || $rental->end_date && $rental->end_date->isPast()) {
+            return redirect()->back()->withErrors('Nie można anulować zakończonego wypożyczenia.');
+        }
+
+        $refundAmount = 0;
+        $status = $rental->status;
+        $now = Carbon::now();
+        $start = Carbon::parse($rental->start_date);
+        $end = Carbon::parse($rental->end_date);
+
+        if ($status === 'oczekujace') {
+            //full refund
+            $refundAmount = $rental->total_price;
+
+        } else{
+            if ($now->lt($start)) {
+               // 80% refund
+                $refundAmount = round($rental->total_price * 0.8, 2);
+
+            } elseif ($now->between($start, $end)) {
+                // refund for unused days
+                $usedDays = $start->diffInDays($now) + 1;
+                $totalDays = $start->diffInDays($end) + 1;
+                $dailyRate = $rental->total_price / $totalDays;
+                $refundAmount = round($dailyRate * ($totalDays - $usedDays), 2);
+
+            }
+
+        }
+
+
+        $user->account_balance += $refundAmount;
+        $user->save();
+
+        $rental->status = 'anulowane';
+        $rental->save();
+
+        $equipment = $rental->equipment;
+        if ($equipment) {
+            $equipment->availability = 'dostepny';
+            $equipment->save();
+        }
+
+        return redirect()->route('client.rentals.index')->with('success', "Wypożyczenie anulowane. Zwrot: {$refundAmount} zł.");
+    }
+
+    public function end(Rental $rental){
+
+        $rental->status = 'zrealizowane';
+        $rental->save();
+
+        $equipment = $rental->equipment;
+        // TO DO karaaaaaaa
+        if ($equipment) {
+            $equipment->availability = 'dostepny';
+            $equipment->number_of_rentals = ($equipment->number_of_rentals ?? 0) + 1;
+
+            $equipment->save();
+        }
+
+
+    }
+
 
 
 
