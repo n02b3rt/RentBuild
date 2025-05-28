@@ -33,10 +33,18 @@
                 <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
         </div>
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex justify-end align-middle w-full">
+            <div class="mt-4">
+                <span class="text-sm text-gray-600">Nie masz konta?</span>
+                <a href="{{ route('register') }}" class="text-sm text-orange-600 hover:underline ml-1">
+                    Zarejestruj się
+                </a>
+            </div>
+            <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+                    {{ __('Log in') }}
+                </x-primary-button>
+            </div>
         </div>
     </form>
 @endsection
