@@ -68,6 +68,7 @@ class Equipment extends Model
         }
 
         return $photos;
+    }
 
     public function isPromotionActive(): bool
     {
