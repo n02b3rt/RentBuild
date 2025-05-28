@@ -15,7 +15,7 @@
                     </span>
                     <p class="text-xl mb-2">
                         <strong>Cena:</strong>
-                        @if($equipment->discount)
+                        @if($equipment->isPromotionActive())
                             <span>
                                 <span class="line-through">
                                     {{ number_format($equipment->rental_price, 2, ',', ' ') }} zł

@@ -163,8 +163,9 @@
                                 <h2 class="text-3xl font-bold">{{ $equipment->name }}</h2>
                                 <div>
                                     <p class="text-sm text-gray-500">wypożyczono: {{ $equipment->number_of_rentals }}</p>
-                                    @if($equipment->discount)
-                                        <div class="">
+
+                                    @if($equipment->isPromotionActive())
+                                        <div>
                                             <p>
                                                 <span class="line-through text-red-500">{{ number_format($equipment->rental_price, 2) }} zł</span>
                                                 <span class="text-gray-500"> cena z 30 dni</span>
@@ -174,12 +175,15 @@
                                     @else
                                         <p class="text-4xl blod">Cena: {{ number_format($equipment->rental_price, 2) }} zł</p>
                                     @endif
+
                                     <p class="text-sm">kategoria: {{ $equipment->category }}</p>
                                     <p class="text-sm">Dostępność: {{ $equipment->availability }}</p>
                                     <p class="text-sm">Stan: {{ $equipment->technical_state }}</p>
 
-                                    @if($equipment->discount)
-                                        <p class="absolute bg-[#f56600] py-1 pl-4 pr-2 rounded-br-lg rounded-tr-lg top-3 left-0">Upust: {{ $equipment->discount }}%</p>
+                                    @if($equipment->isPromotionActive())
+                                        <p class="absolute bg-[#f56600] py-1 pl-4 pr-2 rounded-br-lg rounded-tr-lg top-3 left-0">
+                                            Upust: {{ $equipment->discount }}%
+                                        </p>
                                     @endif
                                 </div>
                             </div>
@@ -187,8 +191,6 @@
                     </a>
                 @endforeach
             @endif
-
-
             <div class="mt-6 2lx:col-span-2 xl:col-span-2">
                     {{ $equipments->appends(request()->query())->links() }}
             </div>
