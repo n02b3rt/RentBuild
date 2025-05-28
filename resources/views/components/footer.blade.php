@@ -20,11 +20,26 @@
         <div>
             <h3 class="text-lg font-semibold mb-4">Informacje</h3>
             <ul class="space-y-2">
-                <li><a href="#" class="hover:underline text-orange-400">O nas</a></li>
+                <li><a href="#" class="hover:underline text-orange-400" id="about_us">O nas</a></li>
                 <li><a href="#" class="hover:underline text-orange-400">Regulamin</a></li>
                 <li><a href="#" class="hover:underline text-orange-400">Polityka prywatności</a></li>
             </ul>
         </div>
+
+        <div class="hidden">
+            <iframe id="ballad" width="300" src="https://www.youtube.com/embed/d275rT1bb8Q" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+
+        <script>
+            function playBalladAboutMyLife(){
+                const frame = document.querySelector("#ballad");
+                frame.src = "https://www.youtube.com/embed/d275rT1bb8Q?autoplay=1";
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelector("#about_us").addEventListener("click", playBalladAboutMyLife);
+            })
+        </script>
     </div>
 
     <div class="mt-10 text-center text-gray-500 text-xs">

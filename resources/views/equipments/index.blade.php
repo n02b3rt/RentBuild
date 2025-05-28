@@ -191,9 +191,6 @@
 
             <div class="mt-6 2lx:col-span-2 xl:col-span-2">
                     {{ $equipments->appends(request()->query())->links() }}
-                <div class="hidden">
-                    <iframe width="300" src="https://www.youtube.com/embed/d275rT1bb8Q?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                </div>
             </div>
         </div>
 
