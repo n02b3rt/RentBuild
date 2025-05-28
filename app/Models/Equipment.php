@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 
 class Equipment extends Model
 {
@@ -37,7 +38,7 @@ class Equipment extends Model
 
     public function finalPrice(): float
     {
-        if ($this->discount !== null) {
+        if ($this->discount !== null && $this->isPromotionActive()) {
             return round($this->rental_price * (1 - $this->discount / 100), 2);
         }
         return $this->rental_price;
@@ -67,6 +68,46 @@ class Equipment extends Model
         }
 
         return $photos;
+
+    public function isPromotionActive(): bool
+    {
+        // Jeśli brak discount, to nie ma promocji
+        if ($this->discount === null) {
+            return false;
+        }
+
+        // Jeśli typ promocji to "kategoria"
+        if ($this->promotion_type === 'kategoria') {
+            if ($this->start_datetime === null || $this->end_datetime === null) {
+                return false;
+            }
+
+            $now = Carbon::now();
+
+            return $now->between(
+                Carbon::parse($this->start_datetime),
+                Carbon::parse($this->end_datetime)
+            );
+        }
+
+        // Jeśli typ promocji to "pojedyncza"
+        if ($this->promotion_type === 'pojedyncza') {
+            // Jeśli NIE ustawiono daty – promocja zawsze aktywna
+            if ($this->start_datetime === null || $this->end_datetime === null) {
+                return true;
+            }
+
+            // Jeśli daty są ustawione, sprawdzamy zakres
+            $now = Carbon::now();
+
+            return $now->between(
+                Carbon::parse($this->start_datetime),
+                Carbon::parse($this->end_datetime)
+            );
+        }
+
+        // Dla innych przypadków zwróć false
+        return false;
     }
 }
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+
 
 class EquipmentController extends Controller
 {
@@ -36,7 +38,32 @@ class EquipmentController extends Controller
         }
 
         if ($request->filled('discount')) {
-            $query->whereNotNull('discount');
+            $now = Carbon::now();
+
+            $query->whereNotNull('discount')
+                ->where(function ($q) use ($now) {
+                    $q->where(function ($q2) use ($now) {
+                        // Typ "kategoria": promocja aktywna tylko jeśli daty są w zakresie
+                        $q2->where('promotion_type', 'kategoria')
+                            ->whereNotNull('start_datetime')
+                            ->whereNotNull('end_datetime')
+                            ->where('start_datetime', '<=', $now)
+                            ->where('end_datetime', '>=', $now);
+                    })->orWhere(function ($q2) use ($now) {
+                        // Typ "pojedyncza": jeśli brak dat – zawsze aktywna
+                        // lub jeśli daty są w zakresie
+                        $q2->where('promotion_type', 'pojedyncza')
+                            ->where(function ($q3) use ($now) {
+                                $q3->whereNull('start_datetime')
+                                    ->orWhere(function ($q4) use ($now) {
+                                        $q4->whereNotNull('start_datetime')
+                                            ->whereNotNull('end_datetime')
+                                            ->where('start_datetime', '<=', $now)
+                                            ->where('end_datetime', '>=', $now);
+                                    });
+                            });
+                    });
+                });
         }
 
         if ($request->filled('category')) {

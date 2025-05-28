@@ -25,19 +25,19 @@
                 </div>
             </div>
 
-            <div class="w-1/2 flex flex-col justify-center">
+            <div class="w-1/2 flex flex-col justify-center p-12">
                 <div>
                     <span class="text-xs text-gray-500">
                         Najniższa cena z 30 dni {{ number_format($equipment->rental_price, 2) }} zł
                     </span>
                     <p class="text-xl mb-2">
                         <strong>Cena:</strong>
-                        @if($equipment->discount)
+                        @if($equipment->isPromotionActive())
                             <span>
                                 <span class="line-through">
                                     {{ number_format($equipment->rental_price, 2, ',', ' ') }} zł
                                 </span>
-                                <span class="text-green-600 ml-3">
+                                <span class="text-green-600 text-3xl ml-3">
                                     {{ number_format($equipment->finalPrice(), 2, ',', ' ') }} zł
                                 </span>
                             </span>
@@ -73,7 +73,7 @@
                             </button>
                         </form>
                     @else
-                        <span>
+                        <span class="italic">
                                 Produkt nie dostępny
                         </span>
                     @endif
