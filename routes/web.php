@@ -16,6 +16,7 @@ Route::get('/', function () {
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
+//Route::get('/equipment/gallery/{id}', [EquipmentController::class, 'showWithGallery'])->name('equipment.gallery');
 
 // Trasy wymagające uwierzytelnienia i weryfikacji emaila
 Route::middleware(['auth', 'verified'])->group(function () {
