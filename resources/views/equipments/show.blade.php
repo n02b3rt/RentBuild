@@ -5,10 +5,10 @@
         <div class="flex bg-white p-10 rounded-md shadow-md">
             <div class="max-h-[500px] w-1/2">
                 <h1 class="text-4xl font-bold mb-4 text-center">{{ $equipment->name }}</h1>
-                <img src="/{{ $equipment->thumbnail }}" alt="{{ $equipment->name }}" class="mb-6 h-[400px] w-auto mx-auto">
+                <img src="/{{ $equipment->thumbnail }}" alt="{{ $equipment->name }}" class="rounded-md max-h-[400px]">
             </div>
 
-            <div class="w-1/2 flex flex-col justify-center">
+            <div class="w-1/2 flex flex-col justify-center p-12">
                 <div>
                     <span class="text-xs text-gray-500">
                         Najniższa cena z 30 dni {{ number_format($equipment->rental_price, 2) }} zł
@@ -20,7 +20,7 @@
                                 <span class="line-through">
                                     {{ number_format($equipment->rental_price, 2, ',', ' ') }} zł
                                 </span>
-                                <span class="text-green-600 ml-3">
+                                <span class="text-green-600 text-3xl ml-3">
                                     {{ number_format($equipment->finalPrice(), 2, ',', ' ') }} zł
                                 </span>
                             </span>
@@ -56,7 +56,7 @@
                             </button>
                         </form>
                     @else
-                        <span>
+                        <span class="italic">
                                 Produkt nie dostępny
                         </span>
                     @endif
