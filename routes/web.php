@@ -88,4 +88,14 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
     Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
 });
 
+Route::prefix('admin/dashboard/users')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
+    Route::post('/', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
+    Route::get('/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
+    Route::match(['put', 'patch'], '/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+});
+
+
 require __DIR__.'/auth.php';

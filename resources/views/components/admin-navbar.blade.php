@@ -31,7 +31,13 @@
                        class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Lista sprzętu</a></li>
             </ul>
         </li>
-
+        <li class="menu-item border-b-[1px] border-white">
+            <a href="#" class="block px-4 py-2 border-b border-white transition">Użytkownicy</a>
+            <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                <li><a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Lista użytkowników</a></li>
+                <li><a href="{{ route('admin.users.create') }}" class="block px-4 py-2 text-[#f56600] border-b ">Dodaj użytkownika</a></li>
+            </ul>
+        </li>
         <li class="menu-item border-b-[1px] border-white">
             <a href="#" class="block px-4 py-2 border-b border-white transition">Promocje</a>
             <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
