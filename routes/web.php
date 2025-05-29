@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SinglePromotionController;
 
 // Strony publiczne
 Route::get('/', function () {
@@ -87,5 +88,15 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
     // Submit form (POST)
     Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
 });
+
+Route::prefix('admin/promotions/single')->name('admin.promotions.single.')->group(function () {
+    Route::get('/', [SinglePromotionController::class, 'index'])->name('index');
+    Route::get('/create', [SinglePromotionController::class, 'create'])->name('create');
+    Route::post('/', [SinglePromotionController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [SinglePromotionController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [SinglePromotionController::class, 'update'])->name('update');
+    Route::delete('/{id}', [SinglePromotionController::class, 'destroy'])->name('destroy');
+});
+
 
 require __DIR__.'/auth.php';
