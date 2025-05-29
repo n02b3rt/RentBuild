@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Client\RentalComplaintController;
 
 // Strony publiczne
 Route::get('/', function () {
@@ -86,6 +87,14 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
 
     // Submit form (POST)
     Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
+});
+
+Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
+    // Formularz zgłoszenia reklamacji
+    Route::get('{rental}/complaint', [RentalComplaintController::class, 'create'])->name('complaint.create');
+
+    // Obsługa wysłania reklamacji
+    Route::post('{rental}/complaint', [RentalComplaintController::class, 'store'])->name('complaint.store');
 });
 
 require __DIR__.'/auth.php';

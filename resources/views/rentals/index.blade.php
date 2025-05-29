@@ -101,7 +101,7 @@
                                         Zakończ
                                     </button>
                                 </form>
-                                <form method="GET" action="#">
+                                <form method="GET" action="{{ route('client.rentals.complaint.create', $rental) }}">
                                     <button type="submit"
                                             class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded transition">
                                         Złóż reklamację
