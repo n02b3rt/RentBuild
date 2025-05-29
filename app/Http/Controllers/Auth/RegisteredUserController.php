@@ -62,9 +62,7 @@ class RegisteredUserController extends Controller
             'rentals_count'     => 0,
         ]);
 
-        $user->email_verified_at = now();
-        $user->save();
-
+        event(new Registered($user));
 
         Auth::login($user);
 
