@@ -125,7 +125,7 @@ class ClientRentalController extends Controller
 
         session()->forget('rental_data');
 
-        return redirect()->route('client.rentals.index')->with('success', 'Płatność została zaakceptowana, wypożyczenie aktywne.');
+        return redirect()->route('client.rentals.index')->with('success', 'Płatność została zaakceptowana, wypożyczenie oczekuje na akceptacje.');
     }
 
     public function cancel(Rental $rental)

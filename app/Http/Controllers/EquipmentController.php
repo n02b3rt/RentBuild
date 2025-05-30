@@ -71,19 +71,20 @@ class EquipmentController extends Controller
         }
 
         // Sorting
-        if ($request->filled('sort')) {
-            switch ($request->sort) {
-                case 'cena_asc':
-                    $query->orderBy('rental_price', 'asc');
-                    break;
-                case 'cena_desc':
-                    $query->orderBy('rental_price', 'desc');
-                    break;
-                case 'wypozyczenia_desc':
-                    $query->orderBy('number_of_rentals', 'desc');
-                    break;
-            }
+        switch ($request->sort) {
+            case 'cena_asc':
+                $query->orderBy('rental_price', 'asc');
+                break;
+            case 'cena_desc':
+                $query->orderBy('rental_price', 'desc');
+                break;
+            case 'wypozyczenia_desc':
+                $query->orderBy('number_of_rentals', 'desc');
+                break;
+            default:
+                $query->orderBy('id', 'asc'); #default sorting by id
         }
+
 
         $equipments = $query->paginate(10)->appends($request->query());
 

@@ -54,7 +54,7 @@
                                 <span class="font-semibold text-yellow-700 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}">
+                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}" onsubmit="return confirm('Czy na pewno chcesz anulować to wypożyczenie?')">
                                     @csrf
                                     <button type="submit"
                                             class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded transition">
@@ -94,7 +94,7 @@
                                 <span class="font-semibold text-orange-600 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="{{ route('client.rentals.end', $rental) }}">
+                                <form method="POST" action="{{ route('client.rentals.end', $rental) }}" onsubmit="return confirm('Czy na pewno chcesz zakończyć wynajem?')">
                                     @csrf
                                     <button type="submit"
                                             class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded transition">
@@ -140,7 +140,7 @@
                                 <span class="font-semibold text-blue-600 text-lg">
                                     {{ number_format($rental->total_price, 2, ',', ' ') }} zł
                                 </span>
-                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}">
+                                <form method="POST" action="{{ route('client.rentals.cancel', $rental) }}" onsubmit="return confirm('Czy na pewno chcesz anulować to wypożyczenie?')">
                                     @csrf
                                     <button type="submit"
                                             class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded transition">
