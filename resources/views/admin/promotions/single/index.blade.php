@@ -38,9 +38,9 @@
                         <td class="px-4 py-3 border-b border-gray-200">{{ $promotion->status }}</td>
                         <td class="px-4 py-3 border-b border-gray-200 whitespace-nowrap">
                             @if($promotion->start_datetime && $promotion->end_datetime)
-                                {{ \Carbon\Carbon::parse($promotion->start_datetime)->format('Y-m-d') }}
+                                {{ \Carbon\Carbon::parse($promotion->start_datetime)->format('Y-m-d H:i') }}
                                 -
-                                {{ \Carbon\Carbon::parse($promotion->end_datetime)->format('Y-m-d') }}
+                                {{ \Carbon\Carbon::parse($promotion->end_datetime)->format('Y-m-d H:i') }}
                             @else
                                 Bezterminowa
                             @endif

@@ -6,19 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\Equipment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SinglePromotionController extends Controller
 {
     public function index()
     {
+        // 1. pobieramy DB time
+        $dbNowRaw    = DB::selectOne('SELECT NOW() as now')->now;
+        $currentDate = Carbon::parse($dbNowRaw);
+
+        // 2. reszta bez zmian, ale korzysta już z $currentDate
         $promotions = Equipment::where('promotion_type', 'pojedyncza')->get();
 
-        $promotionsWithStatus = $promotions->map(function ($promotion) {
-            $currentDate = Carbon::now();
-
+        $promotionsWithStatus = $promotions->map(function ($promotion) use ($currentDate) {
             if ($promotion->start_datetime && $promotion->end_datetime) {
                 $startDate = Carbon::parse($promotion->start_datetime);
-                $endDate = Carbon::parse($promotion->end_datetime);
+                $endDate   = Carbon::parse($promotion->end_datetime);
 
                 if ($currentDate->lt($startDate)) {
                     $status = 'Nadchodząca';
@@ -32,13 +36,12 @@ class SinglePromotionController extends Controller
             }
 
             $promotion->status = $status;
-
             return $promotion;
         });
 
-        // Widok: resources/views/admin/promotions/single/index.blade.php
         return view('admin.promotions.single.index', compact('promotionsWithStatus'));
     }
+
 
     public function create()
     {
