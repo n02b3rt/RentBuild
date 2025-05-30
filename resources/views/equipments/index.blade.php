@@ -24,7 +24,7 @@
                 <div>
                     <label class="block mb-1 font-medium">Sort by</label>
                     <select name="sort" class="w-full border rounded p-1">
-                        <option value="">Default</option>
+                        <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Domyślnie</option>
                         <option value="cena_asc" {{ request('sort') == 'cena_asc' ? 'selected' : '' }}>Price ascending</option>
                         <option value="cena_desc" {{ request('sort') == 'cena_desc' ? 'selected' : '' }}>Price descending</option>
                         <option value="wypozyczenia_desc" {{ request('sort') == 'wypozyczenia_desc' ? 'selected' : '' }}>Most rented</option>
@@ -92,7 +92,7 @@
                 <div>
                     <label class="block mb-1 font-medium">Sortuj wg</label>
                     <select name="sort" class="w-full border rounded p-1">
-                        <option value="">Domyślnie</option>
+                        <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Domyślnie</option>
                         <option value="cena_asc" {{ request('sort') == 'cena_asc' ? 'selected' : '' }}>Cena rosnąco</option>
                         <option value="cena_desc" {{ request('sort') == 'cena_desc' ? 'selected' : '' }}>Cena malejąco</option>
                         <option value="wypozyczenia_desc" {{ request('sort') == 'wypozyczenia_desc' ? 'selected' : '' }}>Najczęściej wypożyczane</option>
