@@ -8,7 +8,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\RentalComplaintController;
+use App\Http\Controllers\Client\RentalComplaintController as ClientRentalComplaintController;
+use App\Http\Controllers\Admin\RentalComplaintController as AdminRentalComplaintController;
 
 // Strony publiczne
 Route::get('/', function () {
@@ -89,12 +90,20 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
     Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
 });
 
-Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
-    // Formularz zgłoszenia reklamacji
-    Route::get('{rental}/complaint', [RentalComplaintController::class, 'create'])->name('complaint.create');
 
-    // Obsługa wysłania reklamacji
-    Route::post('{rental}/complaint', [RentalComplaintController::class, 'store'])->name('complaint.store');
+// ===== Reklamacje =====
+
+Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
+    Route::get('{rental}/complaint', [ClientRentalComplaintController::class, 'create'])->name('complaint.create');
+    Route::post('{rental}/complaint', [ClientRentalComplaintController::class, 'store'])->name('complaint.store');
 });
+
+Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {
+    Route::get('complaints', [AdminRentalComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
+    Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
+});
+
+
 
 require __DIR__.'/auth.php';
