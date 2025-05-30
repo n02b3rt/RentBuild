@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\Admin\AdminEquipmentController;
@@ -10,13 +11,13 @@ use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Middleware\EnsureTwoFactorIsVerified;
 
 // Strony publiczne
 Route::get('/', fn() => view('welcome'));
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
-//Route::get('/equipment/gallery/{id}', [EquipmentController::class, 'showWithGallery'])->name('equipment.gallery');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -51,6 +52,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
+    Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
+        Route::get('recovery-codes', 'showRecoveryCodes')->name('recovery');
+        Route::post('regenerate-codes', 'regenerateRecoveryCodes')->name('recovery.regenerate');
+    });
+
+
     // Profile routes
     Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
         Route::get('/', 'edit')->name('edit');
@@ -60,7 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Admin routes
-Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
 
     // Dashboard view
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
