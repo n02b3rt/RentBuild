@@ -96,6 +96,9 @@ Route::prefix('admin/dashboard')->name('admin.')->group(function () {
 Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
     Route::get('{rental}/complaint', [ClientRentalComplaintController::class, 'create'])->name('complaint.create');
     Route::post('{rental}/complaint', [ClientRentalComplaintController::class, 'store'])->name('complaint.store');
+    Route::get('complaints', [ClientRentalComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('complaints/{rental}', [ClientRentalComplaintController::class, 'show'])->name('complaints.show');
+
 });
 
 Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {

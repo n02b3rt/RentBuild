@@ -9,6 +9,31 @@ use Illuminate\Support\Facades\Auth;
 
 class RentalComplaintController extends Controller
 {
+    public function index()
+    {
+        $user = auth()->user();
+
+        $complaints = Rental::where('user_id', $user->id)
+            ->where(function ($query) {
+                $query->where('status', 'reklamacja')
+                    ->orWhere('status', 'like', 'reklamacja_%');
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+
+        return view('client.rentals.complaints.index', compact('complaints'));
+    }
+
+    public function show(Rental $rental)
+    {
+        // Sprawdź, czy wypożyczenie należy do zalogowanego użytkownika
+        if ($rental->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('client.rentals.complaints.show', compact('rental'));
+    }
+
     public function create(Rental $rental)
     {
         // Sprawdź, czy aktualny user jest właścicielem wypożyczenia
