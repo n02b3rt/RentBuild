@@ -16,52 +16,37 @@
     @endif
 
     <div class="overflow-x-auto">
-        <table class="min-w-full bg-white border border-gray-200">
-            <thead class="bg-gray-100">
-            <tr>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm">ID</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm">Imię</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm">Nazwisko</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm hidden sm:table-cell">Email</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm hidden md:table-cell">Telefon</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm hidden lg:table-cell">Rola</th>
-                <th class="text-left px-2 sm:px-4 py-2 border-b border-gray-300 text-xs sm:text-sm">Akcje</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="space-y-4">
             @forelse ($users as $user)
-                <tr class="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200">{{ $user->id }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200">{{ $user->first_name }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200">{{ $user->last_name }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200 hidden sm:table-cell truncate max-w-xs" title="{{ $user->email }}">{{ $user->email }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200 hidden md:table-cell">{{ $user->phone }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200 hidden lg:table-cell">{{ $user->role }}</td>
-                    <td class="px-2 sm:px-4 py-2 border-b border-gray-200 space-x-2 whitespace-nowrap">
+                <div class="bg-white border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0 md:space-x-6 hover:shadow-lg transition-all">
+                    <div class="flex-1">
+                        <div class="text-lg font-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                        <div class="text-sm text-gray-600 mt-2">Email: <span class="font-medium">{{ $user->email }}</span></div>
+                        <div class="text-sm text-gray-600 mt-1">Telefon: <span class="font-medium">{{ $user->phone ?? 'Brak' }}</span></div>
+                        <div class="text-sm text-gray-600 mt-1">Rola: <span class="font-medium">{{ $user->role }}</span></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row space-x-4 space-y-2 md:space-y-0 justify-start md:justify-end">
                         <a href="{{ route('admin.users.edit', $user) }}"
-                           class="text-blue-600 hover:text-blue-800">Edytuj</a>
+                           class="text-blue-600 hover:text-blue-800 text-sm">Edytuj</a>
 
                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline"
                               onsubmit="return confirm('Na pewno usunąć?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                    class="text-red-600 hover:text-red-800 bg-transparent border-none cursor-pointer">
+                                    class="text-red-600 hover:text-red-800 bg-transparent border-none cursor-pointer text-sm">
                                 Usuń
                             </button>
                         </form>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             @empty
-                <tr>
-                    <td colspan="7" class="text-center px-4 py-6">Brak użytkowników</td>
-                </tr>
+                <div class="text-center text-gray-500">Brak użytkowników</div>
             @endforelse
-            </tbody>
-        </table>
+        </div>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-6">
         {{ $users->links() }}
     </div>
 @endsection

@@ -62,7 +62,12 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email,' . $user->id,
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(pl|com|org|net)$/', // Sprawdzanie poprawności domeny
+            ],
             'password' => 'nullable|string|min:8|confirmed',
             'address' => 'nullable|string|max:500',
             'shipping_address' => 'nullable|string|max:500',
