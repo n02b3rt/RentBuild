@@ -25,6 +25,7 @@ class Equipment extends Model
         'discount',
         'start_datetime',
         'end_datetime',
+        'operator_rate',
         'number_of_rentals',
     ];
 
@@ -110,5 +111,18 @@ class Equipment extends Model
         // Dla innych przypadków zwróć false
         return false;
     }
+
+    protected $casts = [
+        'rental_price'    => 'decimal:2',
+        'operator_rate'   => 'decimal:2',
+        'number_of_rentals' => 'integer',
+    ];
+
+    public function getOperatorDailyRateAttribute(): float
+    {
+        // po prostu zwraca wartość z kolumny
+        return $this->operator_rate;
+    }
+
 }
 

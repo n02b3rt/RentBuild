@@ -29,6 +29,8 @@
                        class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Dodaj sprzęt</a></li>
                 <li><a href="{{ route('admin.equipment.index') }}"
                        class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Lista sprzętu</a></li>
+                <li><a href="{{ route('admin.operator-rates.index') }}"
+                       class="block px-4 py-2 text-[#f56600] border-b">Pracownicy</a></li>
             </ul>
         </li>
 

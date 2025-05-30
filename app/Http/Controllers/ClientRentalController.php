@@ -20,30 +20,41 @@ class ClientRentalController extends Controller
 
         $equipment = Equipment::findOrFail($request->equipment_id);
 
-        if (!$equipment->isAvailable()) {
-            return redirect()->back()->withErrors(['equipment_id' => 'Sprzęt nie jest dostępny do wypożyczenia.']);
-        }
+        $start = Carbon::parse($request->start_date);
+        $end   = Carbon::parse($request->end_date);
+        $days  = $start->diffInDays($end) + 1;
 
-        $startDate = Carbon::parse($request->start_date);
-        $endDate = Carbon::parse($request->end_date);
-        $days = $startDate->diffInDays($endDate) + 1;
+        // ceny jednostkowe
+        $dailyEq      = $equipment->finalPrice();
+        $operatorRate = $equipment->operator_daily_rate;
 
-        $dailyPrice = $equipment->finalPrice();
-        $equipmentCost = round($days * $dailyPrice, 2);
+        // koszty
+        $equipmentCost = round($days * $dailyEq, 2);
+        $operatorCost  = $request->has('with_operator')
+            ? round($days * $operatorRate, 2)
+            : 0;
 
-        $withOperator = $request->has('with_operator');
-        $operatorCost = $withOperator ? round($days * 350, 2) : 0;
+        $total = round($equipmentCost + $operatorCost, 2);
 
-        $totalPrice = round($equipmentCost + $operatorCost, 2);
+        // przygotuj notatki
+        $notes = $request->has('with_operator')
+            ? 'Wypożyczenie z operatorem'
+            : null;
 
+        // zapisz wszystko w sesji
         session([
             'rental_data' => [
-                'equipment_id' => $equipment->id,
-                'start_date' => $startDate->toDateString(),
-                'end_date' => $endDate->toDateString(),
-                'with_operator' => $withOperator,
-                'notes' => $withOperator ? 'Z operatorem' : null,
-                'total_price' => $totalPrice,
+                'equipment_id'         => $equipment->id,
+                'start_date'           => $start->toDateString(),
+                'end_date'             => $end->toDateString(),
+                'with_operator'        => $request->has('with_operator'),
+                'days'                 => $days,
+                'equipment_daily_rate' => $dailyEq,
+                'equipment_cost'       => $equipmentCost,
+                'operator_daily_rate'  => $operatorRate,
+                'operator_cost'        => $operatorCost,
+                'total_price'          => $total,
+                'notes'                => $notes,
             ]
         ]);
 
@@ -52,7 +63,11 @@ class ClientRentalController extends Controller
 
     public function index()
     {
-        $rentals = Rental::with('equipment')->where('user_id', Auth::id())->latest()->get();
+        $rentals = Rental::with('equipment')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
         return view('rentals.index', compact('rentals'));
     }
 
@@ -65,19 +80,21 @@ class ClientRentalController extends Controller
     {
         $data = session('rental_data');
 
-        if (!$data) {
-            return redirect()->route('client.rentals.index')->withErrors('Brak danych do wypożyczenia.');
+        if (! $data) {
+            return redirect()
+                ->route('client.rentals.index')
+                ->withErrors('Brak danych do wypożyczenia.');
         }
 
         $equipment = Equipment::findOrFail($data['equipment_id']);
 
         $rental = new Rental([
-            'equipment_id' => $equipment->id,
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
+            'equipment_id'  => $equipment->id,
+            'start_date'    => $data['start_date'],
+            'end_date'      => $data['end_date'],
             'with_operator' => $data['with_operator'],
-            'notes' => $data['notes'],
-            'total_price' => $data['total_price'],
+            'notes'         => $data['notes'] ?? null,
+            'total_price'   => $data['total_price'],
         ]);
 
         $rental->setRelation('equipment', $equipment);
@@ -89,35 +106,41 @@ class ClientRentalController extends Controller
     {
         $data = session('rental_data');
 
-        if (!$data) {
-            return redirect()->route('client.rentals.index')->withErrors('Brak danych do wypożyczenia.');
+        if (! $data) {
+            return redirect()
+                ->route('client.rentals.index')
+                ->withErrors('Brak danych do wypożyczenia.');
         }
 
         $equipment = Equipment::findOrFail($data['equipment_id']);
 
-        if (!$equipment->isAvailable()) {
-            return redirect()->route('client.rentals.index')->withErrors('Sprzęt nie jest już dostępny.');
+        if (! $equipment->isAvailable()) {
+            return redirect()
+                ->route('client.rentals.index')
+                ->withErrors('Sprzęt nie jest już dostępny.');
         }
 
         $user = Auth::user();
 
         if ($user->account_balance < $data['total_price']) {
-            return redirect()->route('client.rentals.topup')->with('not_enough', true);
+            return redirect()
+                ->route('client.rentals.topup')
+                ->with('not_enough', true);
         }
 
         $user->account_balance = round($user->account_balance - $data['total_price'], 2);
         $user->save();
 
         $rental = Rental::create([
-            'user_id' => $user->id,
-            'equipment_id' => $equipment->id,
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
-            'status' => 'oczekujace',
-            'notes' => $data['notes'],
+            'user_id'           => $user->id,
+            'equipment_id'      => $equipment->id,
+            'start_date'        => $data['start_date'],
+            'end_date'          => $data['end_date'],
+            'status'            => 'oczekujace',
+            'notes'             => $data['notes'] ?? null,
             'payment_reference' => 'fake_payment_token_' . uniqid(),
-            'total_price' => $data['total_price'],
-            'with_operator' => $data['with_operator'],
+            'total_price'       => $data['total_price'],
+            'with_operator'     => $data['with_operator'],
         ]);
 
         $equipment->availability = 'niedostepny';
@@ -125,7 +148,9 @@ class ClientRentalController extends Controller
 
         session()->forget('rental_data');
 
-        return redirect()->route('client.rentals.index')->with('success', 'Płatność została zaakceptowana, wypożyczenie oczekuje na akceptacje.');
+        return redirect()
+            ->route('client.rentals.index')
+            ->with('success', 'Płatność została zaakceptowana, wypożyczenie oczekuje na akceptacje.');
     }
 
     public function cancel(Rental $rental)

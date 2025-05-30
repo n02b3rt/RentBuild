@@ -40,7 +40,6 @@
                         class="border p-2 rounded block mb-4 w-full"
                     >
 
-                    {{-- Checkbox: czy potrzebujesz operatora --}}
                     <div class="mb-4">
                         <input
                             type="checkbox"
@@ -54,8 +53,9 @@
 
                     <p id="total_price" class="font-semibold text-lg mb-4 hidden"></p>
 
-                    <button type="submit" class="bg-[#f56600] hover:bg-[#f98800] text-white font-semibold py-2 px-6 rounded w-full">
-                        Potwierdź zamówienie
+                    <button type="submit"
+                            class="bg-[#f56600] hover:bg-[#f98800] text-white font-semibold py-2 px-6 rounded w-full">
+                        Podsumowanie i płatność
                     </button>
                 </form>
             </div>
@@ -64,23 +64,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const startInput = document.getElementById('start_date');
-            const endInput = document.getElementById('end_date');
-            const withOperatorInput = document.getElementById('with_operator');
-            const totalPriceEl = document.getElementById('total_price');
-            const dailyPrice = {{ $equipment->finalPrice() }};
-            const operatorDaily = 350;
+            const startInput       = document.getElementById('start_date');
+            const endInput         = document.getElementById('end_date');
+            const withOperatorInput= document.getElementById('with_operator');
+            const totalPriceEl     = document.getElementById('total_price');
+
+            // cena sprzętu i stawka operatora pobrane z bazy
+            const dailyPrice    = {{ $equipment->finalPrice() }};
+            const operatorDaily = {{ $equipment->operator_daily_rate }};
 
             function updateTotalPrice() {
                 const start = new Date(startInput.value);
-                const end = new Date(endInput.value);
+                const end   = new Date(endInput.value);
 
                 if (start && end && end >= start) {
-                    const diffTime = end - start;
-                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-                    const baseCost = diffDays * dailyPrice;
-                    const operatorCost = withOperatorInput.checked ? diffDays * operatorDaily : 0;
+                    const diffTime     = end - start;
+                    const diffDays     = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    const baseCost     = diffDays * dailyPrice;
+                    const operatorCost = withOperatorInput.checked
+                        ? diffDays * operatorDaily
+                        : 0;
                     const total = (baseCost + operatorCost).toFixed(2);
 
                     const breakdown = [
@@ -88,10 +91,15 @@
                     ];
 
                     if (withOperatorInput.checked) {
-                        breakdown.push(`${diffDays} dni × 350 zł = ${operatorCost.toFixed(2).replace('.', ',')} zł`);
+                        breakdown.push(
+                            `${diffDays} dni × ${operatorDaily.toFixed(2).replace('.', ',')} zł = ${operatorCost.toFixed(2).replace('.', ',')} zł`
+                        );
                     }
 
-                    totalPriceEl.innerHTML = `Cena całkowita: <strong>${total.replace('.', ',')} zł</strong><br><small>${breakdown.join('<br>')}</small>`;
+                    totalPriceEl.innerHTML = `
+            Cena całkowita: <strong>${total.replace('.', ',')} zł</strong><br>
+            <small>${breakdown.join('<br>')}</small>
+          `;
                     totalPriceEl.classList.remove('hidden');
                 } else {
                     totalPriceEl.textContent = '';
@@ -108,10 +116,8 @@
                 }
                 updateTotalPrice();
             });
-
             endInput.addEventListener('change', updateTotalPrice);
             withOperatorInput.addEventListener('change', updateTotalPrice);
         });
     </script>
-
 @endsection

@@ -13,23 +13,11 @@ class AdminEquipmentController extends Controller
     public function index(Request $request)
     {
         $query = Equipment::query();
-
         if ($search = $request->input('search')) {
-            $query->where('name', 'ilike', "%{$search}%"); // PostgreSQL - case-insensitive
+            $query->where('name', 'ilike', "%{$search}%");
         }
-
         $equipments = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
-
         return view('admin.equipment.index', compact('equipments'));
-    }
-
-
-    public function destroy($id)
-    {
-        $equipment = Equipment::findOrFail($id);
-        $equipment->delete();
-
-        return redirect()->route('admin.equipment.index')->with('success', 'Sprzęt został usunięty.');
     }
 
     public function create()
@@ -40,57 +28,58 @@ class AdminEquipmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'availability' => 'required|in:dostepny,niedostepny,rezerwacja',
-            'rental_price' => 'required|numeric|min:0',
-            'thumbnail' => 'required|mimes:webp|max:4096',
-            'photos.*' => 'nullable|mimes:webp|max:4096',
+            'name'            => 'required|string|max:255',
+            'description'     => 'required|string',
+            'availability'    => 'required|in:dostepny,niedostepny,rezerwacja',
+            'rental_price'    => 'required|numeric|min:0',
+            'thumbnail'       => 'required|mimes:webp|max:4096',
+            'photos.*'        => 'nullable|mimes:webp|max:4096',
             'technical_state' => 'required|in:nowy,uzywany,naprawa',
-            'category' => 'required|string|max:255',
+            'category'        => 'required|string|max:255',
+            'operator_rate'   => 'required|numeric|min:0',
         ]);
 
-        // 📦 Wartości domyślne
-        $validated['promotion_type'] = null;
-        $validated['discount'] = null;
-        $validated['start_datetime'] = null;
-        $validated['end_datetime'] = null;
+        // Jeśli kategoria już istnieje, nadpisz stawką z bazy
+        if (Equipment::where('category', $validated['category'])->exists()) {
+            $validated['operator_rate'] = Equipment::where('category', $validated['category'])
+                ->value('operator_rate');
+        }
+
+        // Domyślnie
         $validated['number_of_rentals'] = 0;
 
         $equipment = new Equipment($validated);
 
-        $categorySlug = str_replace(' ', '-', $equipment->category);
-        $folderName = $categorySlug . '-' . Str::uuid(); // UUID lepszy niż ID bo nie ma jeszcze ID
-        $storageFolder = 'sprzety/' . $folderName;
+        // Folder bazowany na kategorii i UUID
+        $slug          = Str::slug($equipment->category);
+        $folderName    = "{$slug}-" . Str::uuid();
+        $storageFolder = "sprzety/{$folderName}";
 
-        if ($request->hasFile('thumbnail')) {
-            $thumbnailFile = $request->file('thumbnail');
-            $thumbnailPath = $thumbnailFile->storeAs($storageFolder, 'glowne.webp', 'public');
-            $equipment->thumbnail = 'storage/' . $thumbnailPath;
-        }
+        // Miniatura
+        $thumbPath = $request->file('thumbnail')
+            ->storeAs($storageFolder, 'glowne.webp', 'public');
+        $equipment->thumbnail     = "storage/{$thumbPath}";
 
+        // Dodatkowe zdjęcia
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $index => $photo) {
-                $photo->storeAs($storageFolder, 'photo_' . time() . '_' . $index . '.webp', 'public');
+            foreach ($request->file('photos') as $i => $photo) {
+                $photo->storeAs($storageFolder, "photo_".time()."_{$i}.webp", 'public');
             }
-            $equipment->folder_photos = 'storage/' . $storageFolder . '/';
-        } else {
-            // Zapewnienie NOT NULL
-            $equipment->folder_photos = 'storage/' . $storageFolder . '/';
         }
+        $equipment->folder_photos = "storage/{$storageFolder}/";
 
         $equipment->save();
 
-        return redirect()->route('admin.equipment.index')->with('success', 'Sprzęt został dodany.');
-
+        return redirect()
+            ->route('admin.equipment.index')
+            ->with('success', 'Sprzęt został dodany.');
     }
 
     public function edit($id)
     {
-        $equipment = Equipment::findOrFail($id);
+        $equipment  = Equipment::findOrFail($id);
         $categories = Equipment::select('category')->distinct()->pluck('category');
-
-        return view('admin.equipment.edit', compact('equipment', 'categories'));
+        return view('admin.equipment.edit', compact('equipment','categories'));
     }
 
     public function update(Request $request, $id)
@@ -98,63 +87,76 @@ class AdminEquipmentController extends Controller
         $equipment = Equipment::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'availability' => 'required|in:dostepny,niedostepny,rezerwacja',
-            'rental_price' => 'required|numeric|min:0',
-            'thumbnail' => 'nullable|mimes:webp|max:4096',
-            'photos.*' => 'nullable|mimes:webp|max:4096',
+            'name'            => 'required|string|max:255',
+            'description'     => 'required|string',
+            'availability'    => 'required|in:dostepny,niedostepny,rezerwacja',
+            'rental_price'    => 'required|numeric|min:0',
+            'thumbnail'       => 'nullable|mimes:webp|max:4096',
+            'photos.*'        => 'nullable|mimes:webp|max:4096',
             'technical_state' => 'required|in:nowy,uzywany,naprawa',
-            'category' => 'required|string|max:255',
-            'promotion_type' => 'nullable|in:kategoria,pojedyncza',
-            'discount' => 'nullable|numeric|min:0|max:100',
-            'start_datetime' => 'nullable|date',
-            'end_datetime' => 'nullable|date|after_or_equal:start_datetime',
+            'category'        => 'required|string|max:255',
+            'operator_rate'   => 'required|numeric|min:0',
         ]);
 
-        // 🔁 folder jak wcześniej: slug-kategorii + id
-        $categorySlug = Str::slug($validated['category']);
-        $folder = $categorySlug . '-' . $equipment->id;
-        $storageFolder = 'sprzety/' . $folder;
+        // Jeśli kategoria istnieje (inna pozycja), pobierz jej stawkę
+        $exists = Equipment::where('category', $validated['category'])
+            ->where('id','!=',$equipment->id)
+            ->exists();
+        if ($exists) {
+            $validated['operator_rate'] = Equipment::where('category', $validated['category'])
+                ->value('operator_rate');
+        }
 
-        // 🖼️ MINIATURA
+        // Folder bazowany na kategorii i ID
+        $slug          = Str::slug($validated['category']);
+        $storageFolder = "sprzety/{$slug}-{$equipment->id}";
+
+        // Nowa miniatura?
         if ($request->hasFile('thumbnail')) {
-            // usuń starą miniaturę
-            if ($equipment->thumbnail && Storage::disk('public')->exists(Str::after($equipment->thumbnail, 'storage/'))) {
-                Storage::disk('public')->delete(Str::after($equipment->thumbnail, 'storage/'));
+            // Usuń starą
+            if ($equipment->thumbnail) {
+                Storage::disk('public')->delete(
+                    Str::after($equipment->thumbnail, 'storage/')
+                );
             }
-
-            // zapisz nową miniaturę
-            $thumbnail = $request->file('thumbnail');
-            $thumbnailPath = $thumbnail->storeAs($storageFolder, 'glowne.webp', 'public');
-            $equipment->thumbnail = 'storage/' . $thumbnailPath;
+            $path = $request->file('thumbnail')
+                ->storeAs($storageFolder, 'glowne.webp', 'public');
+            $equipment->thumbnail = "storage/{$path}";
         }
 
-        // DODATKOWE ZDJĘCIA
+        // Nowe zdjęcia
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $index => $photo) {
-                $photo->storeAs($storageFolder, 'photo_' . time() . '_' . $index . '.webp', 'public');
+            foreach ($request->file('photos') as $i => $photo) {
+                $photo->storeAs($storageFolder, "photo_".time()."_{$i}.webp", 'public');
             }
         }
 
-        $equipment->name = $validated['name'];
-        $equipment->description = $validated['description'];
-        $equipment->availability = $validated['availability'];
-        $equipment->rental_price = $validated['rental_price'];
-        $equipment->technical_state = $validated['technical_state'];
-        $equipment->category = $validated['category'];
-        $equipment->folder_photos = 'storage/' . $storageFolder . '/';
-
-        // PROMOCJE tylko jeśli NIE jest "kategoria"
-        if ($equipment->promotion_type !== 'kategoria') {
-            $equipment->promotion_type = $validated['promotion_type'];
-            $equipment->discount = $validated['discount'];
-            $equipment->start_datetime = $validated['start_datetime'];
-            $equipment->end_datetime = $validated['end_datetime'];
-        }
+        // Aktualizacja pozostałych pól
+        $equipment->fill([
+            'name'            => $validated['name'],
+            'description'     => $validated['description'],
+            'availability'    => $validated['availability'],
+            'rental_price'    => $validated['rental_price'],
+            'technical_state' => $validated['technical_state'],
+            'category'        => $validated['category'],
+            'operator_rate'   => $validated['operator_rate'],
+            'folder_photos'   => "storage/{$storageFolder}/",
+        ]);
 
         $equipment->save();
 
-        return redirect()->route('admin.equipment.index')->with('success', 'Sprzęt został zaktualizowany.');
+        return redirect()
+            ->route('admin.equipment.index')
+            ->with('success', 'Sprzęt został zaktualizowany.');
+    }
+
+    public function destroy($id)
+    {
+        $equipment = Equipment::findOrFail($id);
+        $equipment->delete();
+
+        return redirect()
+            ->route('admin.equipment.index')
+            ->with('success', 'Sprzęt został usunięty.');
     }
 }
