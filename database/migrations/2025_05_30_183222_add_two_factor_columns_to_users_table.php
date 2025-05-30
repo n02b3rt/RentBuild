@@ -14,9 +14,7 @@ return new class extends Migration {
             $table->boolean('two_factor_enabled')
                 ->default(false)
                 ->after('two_factor_secret');
-            $table->json('two_factor_recovery_codes')
-                ->nullable()
-                ->after('two_factor_enabled');
+            $table->text('two_factor_recovery_codes')->nullable();
             $table->unsignedInteger('two_factor_failed_attempts')
                 ->default(0)
                 ->after('two_factor_recovery_codes');

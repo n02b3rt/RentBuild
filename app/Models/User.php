@@ -115,31 +115,21 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
-    /**
-     * Validate a recovery code: if valid, remove it and reset attempts.
-     */
     public function validateRecoveryCode(string $code): bool
     {
-        $valid = false;
-        $codes = $this->two_factor_recovery_codes ?? [];
+        $input = trim($code);
+        $codes = json_decode(decrypt($this->two_factor_recovery_codes), true);
 
-        foreach ($codes as $idx => $hashed) {
-            if (password_verify($code, $hashed)) {
-                $valid = true;
-                unset($codes[$idx]);
-                break;
+        foreach ($codes as $storedCode) {
+            if (hash_equals($storedCode, $input)) {
+                $remaining = array_filter($codes, fn ($c) => !hash_equals($c, $input));
+                $this->two_factor_recovery_codes = encrypt(json_encode(array_values($remaining)));
+                $this->save();
+                return true;
             }
         }
 
-        if ($valid) {
-            $this->two_factor_recovery_codes = array_values($codes);
-            $this->resetFailedAttempts();
-            $this->save();
-        } else {
-            $this->incrementFailedAttempts();
-        }
-
-        return $valid;
+        return false;
     }
 
     /**
