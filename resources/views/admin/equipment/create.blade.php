@@ -143,9 +143,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Mapa kategorii → stawek
             const categoryRates = @json($categoryRates);
-
             const toggleBtn      = document.getElementById('toggle-category-mode');
             const selectCategory = document.getElementById('existing-category');
             const inputCategory  = document.getElementById('category');
@@ -153,47 +151,48 @@
 
             let usingSelect = false;
 
-            toggleBtn.addEventListener('click', function () {
+            toggleBtn.addEventListener('click', () => {
                 usingSelect = !usingSelect;
 
                 if (usingSelect) {
+                    // Tryb "lista"
                     inputCategory.classList.add('hidden');
                     selectCategory.classList.remove('hidden');
-                    inputCategory.value = '';
-                    rateInput.value     = '';
-                    rateInput.readOnly  = true;
+                    // Przywróć poprzednią lub pustą wartość
+                    selectCategory.value = '';
+                    inputCategory.value  = '';
+                    rateInput.value      = '';
+                    rateInput.readOnly   = true;
                     toggleBtn.textContent = 'Wpisz kategorię';
                 } else {
+                    // Tryb "ręcznie"
                     selectCategory.classList.add('hidden');
                     inputCategory.classList.remove('hidden');
+                    // Wyczyść wszystko, żeby wymusić manualne wpisanie
                     selectCategory.value = '';
-                    rateInput.value     = '';
-                    rateInput.readOnly  = false;
+                    inputCategory.value  = '';
+                    rateInput.value      = '';
+                    rateInput.readOnly   = false;
                     toggleBtn.textContent = 'Wybierz z listy';
                 }
             });
 
-            selectCategory.addEventListener('change', function () {
-                const cat = this.value;
+            selectCategory.addEventListener('change', () => {
+                const cat = selectCategory.value;
                 inputCategory.value = cat;
-                const rate = categoryRates[cat] ?? '';
-                rateInput.value     = rate;
+                rateInput.value     = categoryRates[cat] ?? '';
                 rateInput.readOnly  = true;
             });
 
-            // ————— DODATKOWA WALIDACJA FRONT-END —————
-            // Jeżeli wpiszesz ręcznie w pole kategorii nazwę istniejącą w mapie,
-            // to automatycznie zablokujemy edycję stawki na tę istniejącą wartość.
-            inputCategory.addEventListener('blur', function () {
-                const cat = this.value.trim();
-                if (!usingSelect && cat && categoryRates.hasOwnProperty(cat)) {
-                    // Kategoria istnieje — pobierz stawkę i zablokuj pole
-                    rateInput.value    = categoryRates[cat];
-                    rateInput.readOnly = true;
+            // Dodatkowo: jeśli wpiszesz ręcznie nazwę istniejącej kategorii,
+            // to zablokujemy stawkę i podmienimy ją na tę z mapy.
+            inputCategory.addEventListener('blur', () => {
+                const cat = inputCategory.value.trim();
+                if (!usingSelect && categoryRates.hasOwnProperty(cat)) {
+                    rateInput.value     = categoryRates[cat];
+                    rateInput.readOnly  = true;
                 } else if (!usingSelect) {
-                    // Nowa kategoria — pozwól edytować stawkę
-                    rateInput.value    = '';
-                    rateInput.readOnly = false;
+                    rateInput.readOnly  = false;
                 }
             });
         });
