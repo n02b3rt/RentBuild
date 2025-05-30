@@ -28,7 +28,12 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', // Sprawdzanie poprawności domeny
+            ],
             'password' => 'required|string|min:6|confirmed',
             'address' => 'nullable|string|max:500',
             'shipping_address' => 'nullable|string|max:500',
@@ -49,6 +54,7 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Użytkownik został dodany.');
     }
 
+
     // Formularz edycji użytkownika
     public function edit(User $user)
     {
@@ -66,7 +72,7 @@ class UserController extends Controller
                 'required',
                 'email',
                 'unique:users,email,' . $user->id,
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(pl|com|org|net)$/', // Sprawdzanie poprawności domeny
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'address' => 'nullable|string|max:500',
