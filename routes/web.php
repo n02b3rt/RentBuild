@@ -77,4 +77,13 @@ Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'
     });
 });
 
+Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function() {
+    Route::get('operator-rates',        [\App\Http\Controllers\Admin\OperatorRateController::class, 'index'])
+        ->name('operator-rates.index');
+    Route::get('operator-rates/{category}/edit', [\App\Http\Controllers\Admin\OperatorRateController::class, 'edit'])
+        ->name('operator-rates.edit');
+    Route::put('operator-rates/{category}',      [\App\Http\Controllers\Admin\OperatorRateController::class, 'update'])
+        ->name('operator-rates.update');
+});
+
 require __DIR__.'/auth.php';
