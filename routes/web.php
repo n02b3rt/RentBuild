@@ -82,16 +82,23 @@ Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'
         Route::get('add', [PromotionAddController::class, 'create'])->name('promotions.add');
         Route::post('add', [PromotionAddController::class, 'store'])->name('promotions.store');
     });
-});
 
-Route::prefix('admin/dashboard/users')->group(function () {
-    Route::get('/', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
-    Route::post('/', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-    Route::get('/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
-    Route::match(['put', 'patch'], '/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
-});
+    // Operator rates
+    Route::prefix('operator-rates')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\OperatorRateController::class, 'index'])->name('operator-rates.index');
+        Route::get('/{category}/edit', [\App\Http\Controllers\Admin\OperatorRateController::class, 'edit'])->name('operator-rates.edit');
+        Route::put('/{category}', [\App\Http\Controllers\Admin\OperatorRateController::class, 'update'])->name('operator-rates.update');
+    });
 
+    // Users management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+        Route::match(['put', 'patch'], '/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+    });
+});
 
 require __DIR__.'/auth.php';
