@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\Admin\AdminEquipmentController;
@@ -10,13 +11,13 @@ use App\Http\Controllers\Admin\PromotionAddController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Middleware\EnsureTwoFactorIsVerified;
 
 // Strony publiczne
 Route::get('/', fn() => view('welcome'));
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
-//Route::get('/equipment/gallery/{id}', [EquipmentController::class, 'showWithGallery'])->name('equipment.gallery');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -51,6 +52,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
+    Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
+        Route::get('recovery-codes', 'showRecoveryCodes')->name('recovery');
+        Route::post('regenerate-codes', 'regenerateRecoveryCodes')->name('recovery.regenerate');
+    });
+
+
     // Profile routes
     Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
         Route::get('/', 'edit')->name('edit');
@@ -60,7 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Admin routes
-Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
 
     // Dashboard view
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
@@ -75,15 +82,23 @@ Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'
         Route::get('add', [PromotionAddController::class, 'create'])->name('promotions.add');
         Route::post('add', [PromotionAddController::class, 'store'])->name('promotions.store');
     });
-});
 
-Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function() {
-    Route::get('operator-rates',        [\App\Http\Controllers\Admin\OperatorRateController::class, 'index'])
-        ->name('operator-rates.index');
-    Route::get('operator-rates/{category}/edit', [\App\Http\Controllers\Admin\OperatorRateController::class, 'edit'])
-        ->name('operator-rates.edit');
-    Route::put('operator-rates/{category}',      [\App\Http\Controllers\Admin\OperatorRateController::class, 'update'])
-        ->name('operator-rates.update');
+    // Operator rates
+    Route::prefix('operator-rates')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\OperatorRateController::class, 'index'])->name('operator-rates.index');
+        Route::get('/{category}/edit', [\App\Http\Controllers\Admin\OperatorRateController::class, 'edit'])->name('operator-rates.edit');
+        Route::put('/{category}', [\App\Http\Controllers\Admin\OperatorRateController::class, 'update'])->name('operator-rates.update');
+    });
+
+    // Users management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+        Route::match(['put', 'patch'], '/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+    });
 });
 
 require __DIR__.'/auth.php';
