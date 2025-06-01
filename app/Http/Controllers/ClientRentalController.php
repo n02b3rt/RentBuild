@@ -243,4 +243,8 @@ class ClientRentalController extends Controller
         return redirect()->route('client.rentals.index')->with('success', $message);
     }
 
+    public function payWithBiwo(Request $request)
+    {
+
+    }
 }

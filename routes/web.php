@@ -46,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::post('/{rental}/cancel', 'cancel')->name('cancel');
             Route::post('/{rental}/end', 'end')->name('end');
+            Route::post('/payWithBiwo', 'payWithBiwo')->name('payWithBiwo');
         });
 
         // Account top-up
