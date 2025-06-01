@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\Admin\AdminEquipmentController;
@@ -7,96 +8,124 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SinglePromotionController;
+use App\Http\Controllers\Client\RentalComplaintController as ClientRentalComplaintController;
+use App\Http\Controllers\Admin\RentalComplaintController as AdminRentalComplaintController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Middleware\EnsureTwoFactorIsVerified;
 
 // Strony publiczne
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => view('welcome'));
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
-//Route::get('/equipment/gallery/{id}', [EquipmentController::class, 'showWithGallery'])->name('equipment.gallery');
 
-// Trasy wymagające uwierzytelnienia i weryfikacji emaila
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard użytkownika
+    // Dashboard przekierowujący wg roli
     Route::get('/dashboard', function () {
-        return Redirect::route('client.rentals.index');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+        $user = Auth::user();
+        return $user->hasRole('administrator')
+            ? Redirect::route('admin.dashboard')
+            : Redirect::route('client.rentals.index');
+    })->name('dashboard');
 
-    // Wypożyczenia klienta
-    Route::prefix('client/rentals')->name('client.rentals.')->group(function () {
-        Route::get('/', [ClientRentalController::class, 'index'])->name('index');
-        Route::get('/summary/{equipment}', [ClientRentalController::class, 'summary'])->name('summary');
-        Route::post('/', [ClientRentalController::class, 'store'])->name('store');
+    // Client routes
+    Route::prefix('client')->name('client.')->group(function () {
 
-        Route::get('/payment', [ClientRentalController::class, 'payment'])->name('payment');
-        Route::post('/payment', [ClientRentalController::class, 'processPayment'])->name('processPayment');
+        // Rentals
+        Route::prefix('rentals')->name('rentals.')->controller(ClientRentalController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/summary/{equipment}', 'summary')->name('summary');
+            Route::post('/', 'store')->name('store');
 
-        Route::post('/{rental}/cancel', [ClientRentalController::class, 'cancel'])->name('cancel');
-        Route::post('/{rental}/end', [ClientRentalController::class, 'end'])->name('end');
+            Route::get('/payment', 'payment')->name('payment');
+            Route::post('/payment', 'processPayment')->name('processPayment');
+
+            Route::post('/{rental}/cancel', 'cancel')->name('cancel');
+            Route::post('/{rental}/end', 'end')->name('end');
+        });
+
+        // Account top-up
+        Route::prefix('account')->name('account.')->controller(ClientAccountController::class)->group(function () {
+            Route::get('/topup', 'showTopupForm')->name('topup.form');
+            Route::post('/topup', 'processTopup')->name('topup.process');
+        });
     });
 
-    // Konto klienta - doładowanie
-    Route::prefix('client/account')->name('client.account.')->group(function () {
-        Route::get('/topup', [ClientAccountController::class, 'showTopupForm'])->name('topup.form');
-        Route::post('/topup', [ClientAccountController::class, 'processTopup'])->name('topup.process');
+    Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
+        Route::get('recovery-codes', 'showRecoveryCodes')->name('recovery');
+        Route::post('regenerate-codes', 'regenerateRecoveryCodes')->name('recovery.regenerate');
     });
 
-    // Profil użytkownika
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    // Profile routes
+    Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
+        Route::get('/', 'edit')->name('edit');
+        Route::patch('/', 'update')->name('update');
+        Route::delete('/', 'destroy')->name('destroy');
     });
 });
 
+// Admin routes
+Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+    // Dashboard view
+    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
-// Trasy admina dla sprzętu
-Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/equipment', [AdminEquipmentController::class, 'index'])->name('equipment.index');
-    Route::get('/equipment/create', [AdminEquipmentController::class, 'create'])->name('equipment.create');
-    Route::post('/equipment', [AdminEquipmentController::class, 'store'])->name('equipment.store');
-    Route::get('/equipment/{id}/edit', [AdminEquipmentController::class, 'edit'])->name('equipment.edit');
-    Route::put('/equipment/{id}', [AdminEquipmentController::class, 'update'])->name('equipment.update');
-    Route::delete('/equipment/{id}', [AdminEquipmentController::class, 'destroy'])->name('equipment.destroy');
+    // Equipment
+    Route::resource('equipment', AdminEquipmentController::class)->except(['show']);
+
+    // Promotions - category
+    Route::prefix('promotions/category')->group(function () {
+        Route::get('/', [PromotionController::class, 'index'])->name('promotions.category');
+        Route::delete('{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])->name('promotions.delete');
+        Route::get('add', [PromotionAddController::class, 'create'])->name('promotions.add');
+        Route::post('add', [PromotionAddController::class, 'store'])->name('promotions.store');
+    });
+
+    // Promotions - single equipment
+    Route::prefix('promotions/single')->name('promotions.single.')->group(function () {
+        Route::get('/', [SinglePromotionController::class, 'index'])->name('index');
+        Route::get('/create', [SinglePromotionController::class, 'create'])->name('create');
+        Route::post('/', [SinglePromotionController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [SinglePromotionController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [SinglePromotionController::class, 'update'])->name('update');
+        Route::delete('/{id}', [SinglePromotionController::class, 'destroy'])->name('destroy');
+    });
+
+    // Operator rates
+    Route::prefix('operator-rates')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\OperatorRateController::class, 'index'])->name('operator-rates.index');
+        Route::get('/{category}/edit', [\App\Http\Controllers\Admin\OperatorRateController::class, 'edit'])->name('operator-rates.edit');
+        Route::put('/{category}', [\App\Http\Controllers\Admin\OperatorRateController::class, 'update'])->name('operator-rates.update');
+    });
+
+    // Users management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+        Route::match(['put', 'patch'], '/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+    });
 });
 
-
-// ===== Promocje =====
-
-Route::prefix('admin/dashboard')->name('admin.')->group(function () {
-    // Strona z wszystkimi promocjami pogrupowanymi po kategoriach
-    Route::get('promotions/category', [PromotionController::class, 'index'])->name('promotions.category');
+// Reklamacje - klient
+Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
+    Route::get('{rental}/complaint', [ClientRentalComplaintController::class, 'create'])->name('complaint.create');
+    Route::post('{rental}/complaint', [ClientRentalComplaintController::class, 'store'])->name('complaint.store');
+    Route::get('complaints', [ClientRentalComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('complaints/{rental}', [ClientRentalComplaintController::class, 'show'])->name('complaints.show');
 });
 
-Route::delete('admin/dashboard/promotions/category/{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])
-    ->name('admin.promotions.delete');
-
-
-Route::prefix('admin/dashboard')->name('admin.')->group(function () {
-    // Form (GET)
-    Route::get('promotions/category/add', [PromotionAddController::class, 'create'])->name('promotions.add');
-
-    // Submit form (POST)
-    Route::post('promotions/category/add', [PromotionAddController::class, 'store'])->name('promotions.store');
+// Reklamacje - admin
+Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {
+    Route::get('complaints', [AdminRentalComplaintController::class, 'index'])->name('complaints.index');
+    Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
+    Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
 });
-
-Route::prefix('admin/promotions/single')->name('admin.promotions.single.')->group(function () {
-    Route::get('/', [SinglePromotionController::class, 'index'])->name('index');
-    Route::get('/create', [SinglePromotionController::class, 'create'])->name('create');
-    Route::post('/', [SinglePromotionController::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [SinglePromotionController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [SinglePromotionController::class, 'update'])->name('update');
-    Route::delete('/{id}', [SinglePromotionController::class, 'destroy'])->name('destroy');
-});
-
 
 require __DIR__.'/auth.php';
