@@ -8,13 +8,13 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SinglePromotionController;
 use App\Http\Controllers\Client\RentalComplaintController as ClientRentalComplaintController;
 use App\Http\Controllers\Admin\RentalComplaintController as AdminRentalComplaintController;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Middleware\EnsureTwoFactorIsVerified;
-
 
 // Strony publiczne
 Route::get('/', fn() => view('welcome'));
@@ -60,7 +60,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('regenerate-codes', 'regenerateRecoveryCodes')->name('recovery.regenerate');
     });
 
-
     // Profile routes
     Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
         Route::get('/', 'edit')->name('edit');
@@ -75,15 +74,25 @@ Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'
     // Dashboard view
     Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
 
-    // Equipment - użycie resource zamiast pojedynczych tras
+    // Equipment
     Route::resource('equipment', AdminEquipmentController::class)->except(['show']);
 
-    // Promotions
+    // Promotions - category
     Route::prefix('promotions/category')->group(function () {
         Route::get('/', [PromotionController::class, 'index'])->name('promotions.category');
         Route::delete('{category}/delete', [PromotionController::class, 'destroyCategoryPromotion'])->name('promotions.delete');
         Route::get('add', [PromotionAddController::class, 'create'])->name('promotions.add');
         Route::post('add', [PromotionAddController::class, 'store'])->name('promotions.store');
+    });
+
+    // Promotions - single equipment
+    Route::prefix('promotions/single')->name('promotions.single.')->group(function () {
+        Route::get('/', [SinglePromotionController::class, 'index'])->name('index');
+        Route::get('/create', [SinglePromotionController::class, 'create'])->name('create');
+        Route::post('/', [SinglePromotionController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [SinglePromotionController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [SinglePromotionController::class, 'update'])->name('update');
+        Route::delete('/{id}', [SinglePromotionController::class, 'destroy'])->name('destroy');
     });
 
     // Operator rates
@@ -104,23 +113,19 @@ Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified'
     });
 });
 
-
-// ===== Reklamacje =====
-
+// Reklamacje - klient
 Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->group(function () {
     Route::get('{rental}/complaint', [ClientRentalComplaintController::class, 'create'])->name('complaint.create');
     Route::post('{rental}/complaint', [ClientRentalComplaintController::class, 'store'])->name('complaint.store');
     Route::get('complaints', [ClientRentalComplaintController::class, 'index'])->name('complaints.index');
     Route::get('complaints/{rental}', [ClientRentalComplaintController::class, 'show'])->name('complaints.show');
-
 });
 
+// Reklamacje - admin
 Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {
     Route::get('complaints', [AdminRentalComplaintController::class, 'index'])->name('complaints.index');
     Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
     Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
 });
-
-
 
 require __DIR__.'/auth.php';

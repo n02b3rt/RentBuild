@@ -18,8 +18,7 @@
 
     <ul class="w-full md:border-b-[1px] md:border-white space-y-0 md:space-y-0" id="admin-menu">
         <li class="menu-item border-b-[1px] border-white">
-            <a href="{{ route('admin.dashboard') }}"
-               class="block px-4 py-4 border-b border-white transition">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-4 border-b border-white transition">Dashboard</a>
         </li>
 
         <li class="menu-item border-b-[1px] border-white">
@@ -53,6 +52,8 @@
             <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                 <li><a href="{{ route('admin.promotions.category') }}"
                        class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Na kategorie</a></li>
+                <li><a href="{{ route('admin.promotions.single.index') }}"
+                       class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Pojedyncze</a></li>
             </ul>
         </li>
 
