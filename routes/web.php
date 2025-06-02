@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
 use App\Http\Controllers\Admin\SinglePromotionController;
+use App\Http\Controllers\Admin\AdminRentalController;
 use App\Http\Controllers\Client\RentalComplaintController as ClientRentalComplaintController;
 use App\Http\Controllers\Admin\RentalComplaintController as AdminRentalComplaintController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::get('/', fn() => view('welcome'));
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
+Route::get('/equipments/{id}/preview', [EquipmentController::class, 'showPreview'])->name('equipment.showPreview');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -122,11 +124,22 @@ Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->
     Route::get('complaints/{rental}', [ClientRentalComplaintController::class, 'show'])->name('complaints.show');
 });
 
-// Reklamacje - admin
 Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {
+    // Reklamacje - admin
     Route::get('complaints', [AdminRentalComplaintController::class, 'index'])->name('complaints.index');
     Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
     Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
+
+    // Zamówienia - admin
+    Route::get('list', [AdminRentalController::class, 'index'])->name('list.index');
+    Route::get('create', [AdminRentalController::class, 'create'])->name('create');
+    Route::get('show/{rental}', [AdminRentalController::class, 'show'])->name('show');
+    Route::get('edit/{rental}', [AdminRentalController::class, 'edit'])->name('edit');
+    Route::patch('/{rental}/approve', [AdminRentalController::class, 'approve'])->name('approve');
+    Route::patch('/{rental}/cancel', [AdminRentalController::class, 'cancel'])->name('cancel');
+    Route::patch('/{rental}/reject', [AdminRentalController::class, 'reject'])->name('reject');
+    Route::patch('/{rental}/update', [AdminRentalController::class, 'update'])->name('update');
 });
+
 
 require __DIR__.'/auth.php';

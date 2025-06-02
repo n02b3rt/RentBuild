@@ -2,7 +2,7 @@
 
 @section('content')
     <section class="max-w-[1140px] mx-auto px-6 py-12 bg-white rounded-lg shadow-lg" x-data="{
-        openCurrent: true, openFuture: false, openFinished: false, openPending: true
+        openCurrent: true, openFuture: false, openFinished: false, openPending: true, openRejected: false
     }">
         <h1 class="text-3xl font-bold mb-8 text-gray-900">Moje wypożyczenia</h1>
 
@@ -11,6 +11,7 @@
             $currentRentals = $rentals->where('status', 'aktualne');
             $futureRentals = $rentals->where('status', 'nadchodzace');
             $finishedRentals = $rentals->where('status', 'zrealizowane');
+            $rejectedRentals = $rentals->where('status', 'odrzucone');
         @endphp
 
         @if(session('success'))
@@ -155,7 +156,7 @@
         </section>
 
         {{-- Zakończone --}}
-        <section class="border rounded-lg shadow-sm">
+        <section class="mb-8 border rounded-lg shadow-sm">
             <header class="cursor-pointer bg-green-100 px-6 py-4 flex justify-between items-center"
                     @click="openFinished = !openFinished">
                 <h2 class="text-xl font-semibold text-green-700">Zakończone wypożyczenia</h2>
@@ -182,5 +183,40 @@
                 @endif
             </div>
         </section>
+
+        {{-- Odrzucone --}}
+        <section class="border rounded-lg shadow-sm">
+            <header class="cursor-pointer bg-red-100 px-6 py-4 flex justify-between items-center"
+                    @click="openRejected = !openRejected">
+                <h2 class="text-xl font-semibold text-red-700">Odrzucone</h2>
+                <svg :class="{'transform rotate-180': openRejected}" class="w-5 h-5 text-red-700 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </header>
+            <div x-show="openRejected" x-transition class="px-6 py-4 bg-red-50 space-y-4">
+                @if($rejectedRentals->isEmpty())
+                    <p class="text-red-700 italic">Brak odrzuconych wypożyczeń.</p>
+                @else
+                    @foreach($rejectedRentals as $rental)
+                        <div class="border border-red-300 rounded-lg p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between bg-red-50">
+                            <div>
+                                <h3 class="font-semibold text-lg text-gray-900">{{ $rental->equipment->name }}</h3>
+                                <p class="text-sm text-gray-700">
+                                    <strong>Okres:</strong> {{ $rental->start_date->format('Y-m-d') }} – {{ $rental->end_date->format('Y-m-d') }}
+                                </p>
+                                <p class="text-sm text-gray-700 italic">{{ $rental->notes ?? 'Brak uwag' }}</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                        <span class="font-semibold text-red-700 text-lg">
+                            {{ number_format($rental->total_price, 2, ',', ' ') }} zł
+                        </span>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+        </section>
+
+
     </section>
 @endsection

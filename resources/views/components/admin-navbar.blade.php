@@ -44,6 +44,8 @@
             <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                 <li><a href="{{ route('admin.rentals.complaints.index') }}"
                        class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Reklamacje</a></li>
+                <li><a href="{{ route('admin.rentals.list.index') }}"
+                       class="block px-4 py-2 text-[#f56600] border-[#f56600]">Lista</a></li>
             </ul>
         </li>
 

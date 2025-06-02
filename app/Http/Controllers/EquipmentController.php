@@ -99,4 +99,8 @@ class EquipmentController extends Controller
         return view('equipments.show', compact('equipment', 'additionalPhotos'));
     }
 
+    public function showPreview($id){
+        $equipment = Equipment::findOrFail($id);
+        return view('equipments.showPreview', compact('equipment'));
+    }
 }
