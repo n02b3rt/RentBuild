@@ -10,7 +10,7 @@
     <h1 class="text-3xl font-bold mb-8 text-[#f56600]">Lista zamówień</h1>
 
     <div class="mb-6">
-        <a href="{{ route('admin.rentals.create') }}"
+        <a href="{{ route('admin.rentals.create.step1') }}"
            class="inline-block bg-[#f56600] hover:bg-[#f98800] text-white font-semibold py-2 px-6 rounded">
             Dodaj nowe zamówienie
         </a>

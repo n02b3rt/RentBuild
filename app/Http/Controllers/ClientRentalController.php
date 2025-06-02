@@ -16,6 +16,7 @@ class ClientRentalController extends Controller
             'equipment_id' => 'required|exists:equipment,id',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $equipment = Equipment::findOrFail($request->equipment_id);
@@ -36,10 +37,7 @@ class ClientRentalController extends Controller
 
         $total = round($equipmentCost + $operatorCost, 2);
 
-        // przygotuj notatki
-        $notes = $request->has('with_operator')
-            ? 'Wypożyczenie z operatorem'
-            : null;
+        $notes = $request->input('notes', '');
 
         // zapisz wszystko w sesji
         session([

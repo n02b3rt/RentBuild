@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Equipment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Rental;
 use Carbon\Carbon;
@@ -20,7 +22,7 @@ class AdminRentalController extends Controller
             $query->where('status', $status);
         }
 
-        $rentals = $query->paginate(15);
+        $rentals = $query->paginate(15)->appends(['status' => $status]);
 
         return view('admin.rentals.list.index', compact('rentals'));
     }
@@ -37,8 +39,10 @@ class AdminRentalController extends Controller
 
     public function create()
     {
-        return view('admin.rentals.create');
+        $equipments = Equipment::where('availability', 'dostepny')->get(); // lub z filtrami
+        return view('admin.rentals.create', compact('equipments'));
     }
+
 
     public function approve($id)
     {
@@ -160,4 +164,87 @@ class AdminRentalController extends Controller
         $user->save();
 
     }
+
+
+    public function createStep1(Request $request)
+    {
+        $search = $request->input('search');
+
+        $usersQuery = User::query();
+
+        if ($search) {
+            $usersQuery->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $usersQuery->paginate(10);
+
+        return view('admin.rentals.create.step1', compact('users'));
+    }
+    public function postSelectUser(Request $request) {
+        $userId = $request->input('user_id');
+        return redirect()->route('admin.rentals.create.step2', ['user' => $userId]);
+    }
+    public function createStep2(Request $request)
+    {
+        $userId = $request->query('user');
+        if (!$userId) {
+            return redirect()->route('admin.rentals.create.step1')->with('error', 'Nie wybrano użytkownika.');
+        }
+
+        $user = User::findOrFail($userId);
+
+        $equipments = Equipment::where('availability', 'dostepny')->get();
+
+        return view('admin.rentals.create.step2', compact('user', 'equipments'));
+    }
+
+    public function postSelectEquipment(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'selected_equipment' => ['required', 'exists:equipment,id'],
+        ]);
+
+        $userId = $validated['user_id'];
+        $equipmentId = $validated['selected_equipment'];
+
+        return redirect()->route('admin.rentals.create.summary', [
+            'user' => $userId,
+            'equipment' => $equipmentId,
+        ]);
+    }
+
+
+    public function summary(Request $request)
+    {
+        $userId = $request->query('user');
+        $equipmentId = $request->query('equipment');
+
+        if (!$userId || !$equipmentId) {
+            return redirect()->route('admin.rentals.create.step1')
+                ->with('error', 'Nie wybrano użytkownika lub sprzętu.');
+        }
+
+        $user = User::find($userId);
+        $equipment = Equipment::find($equipmentId);
+
+        if (!$user || !$equipment) {
+            return redirect()->route('admin.rentals.create.step1')
+                ->with('error', 'Nieprawidłowy użytkownik lub sprzęt.');
+        }
+
+
+        return view('admin.rentals.create.summary', compact('user', 'equipment'));
+    }
+
+    public function finalize( )
+    {
+
+    }
+
+
 }

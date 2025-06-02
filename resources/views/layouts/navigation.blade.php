@@ -10,10 +10,12 @@
                 <a href="{{ route('equipments.index') }}" class="hover:text-brand">Oferta</a>
 
                 @auth
-                    <!-- Stan konta -->
-                    <div class="text-sm font-medium text-gray-700 px-3 py-2 border border-gray-200 rounded-md select-none">
-                        Saldo: <span class="font-semibold">{{ number_format(Auth::user()->account_balance, 2) }} zł</span>
-                    </div>
+                    @if(!Auth::user()->hasRole("administrator"))
+                        <!-- Stan konta -->
+                        <div class="text-sm font-medium text-gray-700 px-3 py-2 border border-gray-200 rounded-md select-none">
+                            Saldo: <span class="font-semibold">{{ number_format(Auth::user()->account_balance, 2) }} zł</span>
+                        </div>
+                    @endif
 
                     <!-- User Dropdown -->
                     <x-dropdown align="right" width="48">
@@ -65,13 +67,14 @@
             <a href="#" class="hover:text-brand">Kontakt</a>
             <a href="{{ route('equipments.index') }}" class="hover:text-brand">Oferta</a>
 
-            @auth
-                <!-- Stan konta mobilnie -->
-                <div class="px-3 py-2 border border-gray-200 rounded-md text-sm font-medium text-gray-700 select-none">
-                    Saldo: <span class="font-semibold">{{ number_format(Auth::user()->account_balance, 2) }} zł</span>
-                </div>
-
-                <a href="{{ route('dashboard') }}" class="hover:text-brand">Dashboard</a>
+                @auth
+                    @if(!Auth::user()->hasRole("administrator"))
+                        <!-- Stan konta mobilnie -->
+                        <div class="px-3 py-2 border border-gray-200 rounded-md text-sm font-medium text-gray-700 select-none">
+                            Saldo: <span class="font-semibold">{{ number_format(Auth::user()->account_balance, 2) }} zł</span>
+                        </div>
+                    @endif
+                    <a href="{{ route('dashboard') }}" class="hover:text-brand">Dashboard</a>
                 <a href="{{ route('profile.edit') }}" class="hover:text-brand">Profil</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

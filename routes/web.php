@@ -132,13 +132,21 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
 
     // Zamówienia - admin
     Route::get('list', [AdminRentalController::class, 'index'])->name('list.index');
-    Route::get('create', [AdminRentalController::class, 'create'])->name('create');
     Route::get('show/{rental}', [AdminRentalController::class, 'show'])->name('show');
     Route::get('edit/{rental}', [AdminRentalController::class, 'edit'])->name('edit');
+
     Route::patch('/{rental}/approve', [AdminRentalController::class, 'approve'])->name('approve');
     Route::patch('/{rental}/cancel', [AdminRentalController::class, 'cancel'])->name('cancel');
     Route::patch('/{rental}/reject', [AdminRentalController::class, 'reject'])->name('reject');
     Route::patch('/{rental}/update', [AdminRentalController::class, 'update'])->name('update');
+
+    // Tworzenie zamówienia - multi-step
+    Route::get('create/step1', [AdminRentalController::class, 'createStep1'])->name('create.step1');
+    Route::post('create/step1/select', [AdminRentalController::class, 'postSelectUser'])->name('create.step1.select');
+    Route::get('create/step2', [AdminRentalController::class, 'createStep2'])->name('create.step2');
+    Route::post('create/step2/select', [AdminRentalController::class, 'postSelectEquipment'])->name('create.step2.select');
+    Route::get('create/summary', [AdminRentalController::class, 'summary'])->name('create.summary');
+    Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
 });
 
 
