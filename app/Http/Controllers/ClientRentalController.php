@@ -159,22 +159,30 @@ class ClientRentalController extends Controller
             abort(403, 'Brak dostępu do tego wypożyczenia.');
         }
 
-        if ($rental->status === 'zrealizowane' || $rental->end_date && $rental->end_date->isPast()) {
-            return redirect()->back()->withErrors('Nie można anulować zakończonego wypożyczenia.');
+        if (!in_array($rental->status, ['oczekujace', 'nadchodzace', 'aktualne'])) {
+            return redirect()->back()->withErrors('Nie można anulować tego wypożyczenia.');
         }
 
         $refundAmount = 0;
-        $status = $rental->status;
         $now = Carbon::now();
         $start = Carbon::parse($rental->start_date);
         $end = Carbon::parse($rental->end_date);
 
-        if ($status === 'oczekujace') {
+        if ($rental->status === 'oczekujace') {
             $refundAmount = round($rental->total_price, 2);
-        } else {
+        } elseif ($rental->status === 'nadchodzace') {
             if ($now->lt($start)) {
+                // 80% zwrotu przed rozpoczęciem
                 $refundAmount = round($rental->total_price * 0.8, 2);
-            } elseif ($now->between($start, $end)) {
+            } else {
+                // częściowy zwrot jeśli już rozpoczęte
+                $usedDays = $start->diffInDays($now) + 1;
+                $totalDays = $start->diffInDays($end) + 1;
+                $dailyRate = $rental->total_price / $totalDays;
+                $refundAmount = round($dailyRate * ($totalDays - $usedDays), 2);
+            }
+        } elseif ($rental->status === 'aktualne') {
+            if ($now->between($start, $end)) {
                 $usedDays = $start->diffInDays($now) + 1;
                 $totalDays = $start->diffInDays($end) + 1;
                 $dailyRate = $rental->total_price / $totalDays;
@@ -182,21 +190,28 @@ class ClientRentalController extends Controller
             }
         }
 
-        $user->account_balance = round($user->account_balance + $refundAmount, 2);
-        $user->save();
-
+        // Zmieniamy status wypożyczenia
         $rental->status = 'anulowane';
         $rental->save();
 
+        // Zwracamy środki
+        if ($refundAmount > 0) {
+            $user->account_balance = round($user->account_balance + $refundAmount, 2);
+            $user->save();
+        }
+
+        // Zmieniamy dostępność sprzętu
         $equipment = $rental->equipment;
         if ($equipment) {
             $equipment->availability = 'dostepny';
             $equipment->save();
         }
 
-        return redirect()->route('client.rentals.index')
-            ->with('success', "Wypożyczenie anulowane. Zwrot: " . number_format($refundAmount, 2) . " zł.");
+        return redirect()
+            ->route('client.rentals.index')
+            ->with('success', "Wypożyczenie zostało anulowane. Zwrot środków: " . number_format($refundAmount, 2) . " zł.");
     }
+
 
     public function end(Rental $rental)
     {

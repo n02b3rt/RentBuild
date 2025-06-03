@@ -146,7 +146,9 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::get('create/step2', [AdminRentalController::class, 'createStep2'])->name('create.step2');
     Route::post('create/step2/select', [AdminRentalController::class, 'postSelectEquipment'])->name('create.step2.select');
     Route::get('create/summary', [AdminRentalController::class, 'summary'])->name('create.summary');
+    Route::post('create/payment', [AdminRentalController::class, 'payment'])->name('create.payment');
     Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
+    Route::post('create/payWithBiwo', [AdminRentalController::class, 'payWithBiwo'])->name('create.payWithBiwo');
 });
 
 
