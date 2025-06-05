@@ -60,7 +60,7 @@
         <li class="menu-item border-b-[1px] border-white">
             <a href="#" class="block px-4 py-2 border-b border-white transition">Raporty</a>
             <ul class="submenu pl-4 bg-white space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
-                <li><a href="#" class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Coś tam</a></li>
+                <li><a href="{{ route('admin.raports.index') }}" class="block px-4 py-2 text-[#f56600] border-b border-[#f56600]">Wynajęcia</a></li>
             </ul>
         </li>
     </ul>

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Middleware\EnsureTwoFactorIsVerified;
+use App\Http\Controllers\Admin\RentalReportController;
 
 // Strony publiczne
 Route::get('/', fn() => view('welcome'));
@@ -128,5 +129,11 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
     Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
 });
+
+
+// Raporty - admin
+Route::get('/admin/raports', [RentalReportController::class, 'index'])
+    ->name('admin.raports.index');
+
 
 require __DIR__.'/auth.php';
