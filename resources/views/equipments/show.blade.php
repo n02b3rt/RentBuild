@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="max-w-[1140px] mx-auto px-4 py-12">
-        <div class="flex  bg-white p-10 rounded-md shadow-md">
-            <div class="max-h-[500px] mr-14 w-1/2">
+    <section class="max-w-[1140px] mx-auto px-4 py-12 max-md:px-0">
+        <div class="flex max-md:flex-col bg-white p-10 max-sm:p-4 rounded-md shadow-md">
+            <div class="max-h-[500px] max-md:w-full lg:mr-14 max-md:mr-2  w-1/2">
                 <h1 class="text-4xl font-bold mb-4 text-center">{{ $equipment->name }}</h1>
                 <div id="slider" class="relative w-full max-w-xl mx-auto">
                     <img id="slider-image"
                          src="/{{ $equipment->thumbnail }}"
-                         class="h-[400px] w-auto mx-auto rounded shadow mb-4"
+                         class="h-[400px] max-md:h-[250px] max-sm:h-[200px] w-auto mx-auto rounded shadow mb-4"
                          alt="Zdjęcie sprzętu">
 
                     @if(count($additionalPhotos) > 0)
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <div class="w-1/2 flex flex-col justify-center p-12">
+            <div class="w-1/2 flex flex-col max-md:w-full justify-center p-12 max-md:py-12 max-lg:px-6">
                 <div>
                     <span class="text-xs text-gray-500">
                         Najniższa cena z 30 dni {{ number_format($equipment->rental_price, 2) }} zł
