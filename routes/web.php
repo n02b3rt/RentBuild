@@ -129,4 +129,8 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
 });
 
+Route::get('/promocje/regulamin', function () {
+    return view('promotions.rules');
+})->name('promotions.rules');
+
 require __DIR__.'/auth.php';
