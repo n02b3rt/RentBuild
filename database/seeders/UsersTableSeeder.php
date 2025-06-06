@@ -47,7 +47,6 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Dodatkowi klienci
             [
                 'first_name' => 'Tomasz',
                 'last_name' => 'Wiśniewski',
@@ -78,7 +77,7 @@ class UsersTableSeeder extends Seeder
                 'payment_provider' => null,
                 'role' => 'klient',
                 'rentals_count' => 3,
-                'account_balance' => 200.00,
+                'account_balance' => 200000.00,
                 'email_verified_at' => now(),
                 'remember_token' => null,
                 'created_at' => now(),

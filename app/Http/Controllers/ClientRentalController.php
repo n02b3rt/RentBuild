@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\Rental;
 use App\Models\Equipment;
 use Carbon\Carbon;
-use App\Http\Controllers\LoyalCustomerPromotionController;
-
 
 class ClientRentalController extends Controller
 {
@@ -34,10 +34,11 @@ class ClientRentalController extends Controller
     {
         // Walidacja pól
         $request->validate([
-            'equipment_id'      => 'required|exists:equipment,id',
-            'start_date'        => 'required|date|after_or_equal:today',
-            'end_date'          => 'required|date|after_or_equal:start_date',
-            'with_operator'     => 'sometimes|boolean',
+            'equipment_id'  => 'required|exists:equipment,id',
+            'start_date'    => 'required|date|after_or_equal:today',
+            'end_date'      => 'required|date|after_or_equal:start_date',
+            'with_operator' => 'sometimes|boolean',
+            'notes'         => 'nullable|string|max:1000',
         ]);
 
         $equipment = Equipment::findOrFail($request->equipment_id);
@@ -71,9 +72,7 @@ class ClientRentalController extends Controller
         $discountedTotal = round($rawTotal - $discountAmount, 2);
 
         // Notatki (opcjonalnie)
-        $notes = $request->has('with_operator')
-            ? 'Wypożyczenie z operatorem'
-            : null;
+        $notes = $request->input('notes', null);
 
         // Zapisujemy do sesji wszystkie niezbędne dane
         session([
@@ -216,22 +215,30 @@ class ClientRentalController extends Controller
             abort(403, 'Brak dostępu do tego wypożyczenia.');
         }
 
-        if ($rental->status === 'zrealizowane' || $rental->end_date && $rental->end_date->isPast()) {
-            return redirect()->back()->withErrors('Nie można anulować zakończonego wypożyczenia.');
+        if (!in_array($rental->status, ['oczekujace', 'nadchodzace', 'aktualne'])) {
+            return redirect()->back()->withErrors('Nie można anulować tego wypożyczenia.');
         }
 
         $refundAmount = 0;
-        $status = $rental->status;
         $now = Carbon::now();
         $start = Carbon::parse($rental->start_date);
         $end = Carbon::parse($rental->end_date);
 
-        if ($status === 'oczekujace') {
+        if ($rental->status === 'oczekujace') {
             $refundAmount = round($rental->total_price, 2);
-        } else {
+        } elseif ($rental->status === 'nadchodzace') {
             if ($now->lt($start)) {
+                // 80% zwrotu przed rozpoczęciem
                 $refundAmount = round($rental->total_price * 0.8, 2);
-            } elseif ($now->between($start, $end)) {
+            } else {
+                // częściowy zwrot jeśli już rozpoczęte
+                $usedDays = $start->diffInDays($now) + 1;
+                $totalDays = $start->diffInDays($end) + 1;
+                $dailyRate = $rental->total_price / $totalDays;
+                $refundAmount = round($dailyRate * ($totalDays - $usedDays), 2);
+            }
+        } elseif ($rental->status === 'aktualne') {
+            if ($now->between($start, $end)) {
                 $usedDays = $start->diffInDays($now) + 1;
                 $totalDays = $start->diffInDays($end) + 1;
                 $dailyRate = $rental->total_price / $totalDays;
@@ -239,20 +246,117 @@ class ClientRentalController extends Controller
             }
         }
 
-        $user->account_balance = round($user->account_balance + $refundAmount, 2);
-        $user->save();
-
+        // Zmieniamy status wypożyczenia
         $rental->status = 'anulowane';
         $rental->save();
 
+        // Zwracamy środki
+        if ($refundAmount > 0) {
+            $user->account_balance = round($user->account_balance + $refundAmount, 2);
+            $user->save();
+        }
+
+        // Zmieniamy dostępność sprzętu
         $equipment = $rental->equipment;
         if ($equipment) {
             $equipment->availability = 'dostepny';
             $equipment->save();
         }
 
-        return redirect()->route('client.rentals.index')
-            ->with('success', "Wypożyczenie anulowane. Zwrot: " . number_format($refundAmount, 2) . " zł.");
+        return redirect()
+            ->route('client.rentals.index')
+            ->with('success', "Wypożyczenie zostało anulowane. Zwrot środków: " . number_format($refundAmount, 2) . " zł.");
+    }
+
+    /**
+     * GET  /client/biwo/generate
+     *    → generuje 6‐cyfrowy kod BIWO, zapisuje go w cache i loguje do laravel.log
+     */
+    public function generateBiwoCode(Request $request)
+    {
+        $userId = $request->user()->id;
+        // Losowy 6‐cyfrowy ciąg (z wiodącymi zerami)
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        // Zapisujemy w Cache pod kluczem "biwo_{user_id}", ważne 15 min
+        $cacheKey = "biwo_{$userId}";
+        Cache::put($cacheKey, $code, now()->addMinutes(15));
+
+        // Logujemy w storage/logs/laravel.log
+        Log::info("Użytkownik {$userId} wygenerował kod BIWO: {$code} (ważny 15 min)");
+
+        // Wracamy z komunikatem do sesji
+        return back()->with('status', 'Kod BIWO został wygenerowany – sprawdź logi serwera.');
+    }
+
+    /**
+     * POST /client/biwo/pay
+     *   → Weryfikuje kod BIWO, a następnie robi dokładnie to, co processPayment():
+     *     * Sprawdza, czy są dane w sesji
+     *     * Sprawdza dostępność sprzętu
+     *     * Tworzy wypożyczenie, ustawia sprzęt na „niedostępny”
+     *     * Czyści sesję, zwraca komunikat sukcesu
+     */
+    public function payWithBiwo(Request $request)
+    {
+        // 1) Sprawdź, czy w sesji są dane do wypożyczenia
+        $data = session('rental_data');
+        if (! $data) {
+            return redirect()
+                ->route('client.rentals.index')
+                ->withErrors('Brak danych do wypożyczenia.');
+        }
+
+        // 2) WALIDACJA KODU BIWO
+        $payload = $request->validate([
+            'code' => ['required', 'digits:6'],
+        ]);
+
+        $userId   = Auth::id();
+        $cacheKey = "biwo_{$userId}";
+        $cachedCode = Cache::get($cacheKey);
+
+        if (! $cachedCode || $cachedCode !== $payload['code']) {
+            return back()->withErrors(['code' => 'Nieprawidłowy lub wygasły kod BIWO.']);
+        }
+
+        // 3) Usuwamy kod z cache (żeby nie można było użyć dwa razy)
+        Cache::forget($cacheKey);
+
+        // 4) Sprawdź dostępność sprzętu
+        $equipment = Equipment::findOrFail($data['equipment_id']);
+        if (! $equipment->isAvailable()) {
+            return redirect()
+                ->route('client.rentals.index')
+                ->withErrors('Sprzęt nie jest już dostępny.');
+        }
+
+        // 5) Tworzymy nowe wypożyczenie (bez sprawdzania salda, bo „zapłacono BIWO”)
+        $user = Auth::user();
+
+        $rental = Rental::create([
+            'user_id'           => $user->id,
+            'equipment_id'      => $equipment->id,
+            'start_date'        => $data['start_date'],
+            'end_date'          => $data['end_date'],
+            'with_operator'     => $data['with_operator'],
+            'notes'             => $data['notes'] ?? null,
+            'payment_reference' => 'biwo_' . $user->id . '_' . now()->timestamp,
+            'status'            => 'oczekujace',
+            'total_price'       => $data['total_price'],
+        ]);
+
+        // 6) Zaktualizuj dostępność sprzętu
+        $equipment->availability = 'niedostepny';
+        $equipment->save();
+
+        // 7) Usuń dane z sesji
+        session()->forget('rental_data');
+
+        // 8) Przekieruj z komunikatem o sukcesie
+        return redirect()
+            ->route('client.rentals.index')
+            ->with('success', 'Płatność przez BIWO zakończona pomyślnie, wypożyczenie zostało utworzone i oczekuje na akceptację.');
     }
 
     public function end(Rental $rental)
@@ -296,10 +400,5 @@ class ClientRentalController extends Controller
         }
 
         return redirect()->route('client.rentals.index')->with('success', $message);
-    }
-
-    public function payWithBiwo(Request $request)
-    {
-
     }
 }

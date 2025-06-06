@@ -90,18 +90,22 @@
                         {{ $equipment->description }}
                     </p>
 
-                    @if($equipment->isAvailable())
-                        <form action="{{ route('client.rentals.summary', $equipment->id) }}" method="GET" class="mb-4 flex justify-center">
-                            <button type="submit"
-                                    class="bg-[#f56600] hover:bg-[#f98800] text-white font-semibold py-2 px-6 rounded">
-                                ZAMÓW
-                            </button>
-                        </form>
+                    @auth
+                        @if(!$equipment->isAvailable())
+                            <span class="italic">Produkt niedostępny</span>
+                        @elseif(!auth()->user()->hasRole("administrator"))
+                            <form action="{{ route('client.rentals.summary', $equipment->id) }}" method="GET" class="mb-4 flex justify-center">
+                                <button type="submit"
+                                        class="bg-[#f56600] hover:bg-[#f98800] text-white font-semibold py-2 px-6 rounded">
+                                    ZAMÓW
+                                </button>
+                            </form>
+                        @else
+                            <span class="text-sm italic text-gray-500">Administratorzy nie mogą zamawiać sprzętu.</span>
+                        @endif
                     @else
-                        <span class="italic">
-                            Produkt nie dostępny
-                        </span>
-                    @endif
+                        <span class="italic">Zaloguj się, aby złożyć zamówienie.</span>
+                    @endauth
                 </div>
             </div>
         </div>

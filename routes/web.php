@@ -1,14 +1,16 @@
 <?php
 
+use App\Http\Controllers\Client\ClientAccountController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
-use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\Admin\AdminEquipmentController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\PromotionAddController;
 use App\Http\Controllers\Admin\SinglePromotionController;
+use App\Http\Controllers\Admin\AdminRentalController;
 use App\Http\Controllers\Client\RentalComplaintController as ClientRentalComplaintController;
 use App\Http\Controllers\Admin\RentalComplaintController as AdminRentalComplaintController;
 use Illuminate\Support\Facades\Route;
@@ -21,9 +23,9 @@ Route::get('/', fn() => view('welcome'));
 
 Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
 Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equipment.show');
+Route::get('/equipments/{id}/preview', [EquipmentController::class, 'showPreview'])->name('equipment.showPreview');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
     // Dashboard przekierowujący wg roli
     Route::get('/dashboard', function () {
         $user = Auth::user();
@@ -34,7 +36,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Client routes
     Route::prefix('client')->name('client.')->group(function () {
-
         // Rentals
         Route::prefix('rentals')->name('rentals.')->controller(ClientRentalController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -49,11 +50,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/payWithBiwo', 'payWithBiwo')->name('payWithBiwo');
         });
 
-        // Account top-up
-        Route::prefix('account')->name('account.')->controller(ClientAccountController::class)->group(function () {
-            Route::get('/topup', 'showTopupForm')->name('topup.form');
-            Route::post('/topup', 'processTopup')->name('topup.process');
-        });
+        // GET|POST doładowania (widok: client.topup)
+        Route::match(['get','post'], 'topup', [ClientAccountController::class, 'handleTopUp'])
+            ->name('topup.form');
+
+        // Link potwierdzający z tokenem
+        Route::get('topup/confirm/{token}', [ClientAccountController::class, 'confirmTopUp'])
+            ->name('topup.confirm');
+
+        // BIWO: generowanie kodu
+        Route::get('rentals/biwo/generate', [ClientRentalController::class, 'generateBiwoCode'])
+            ->name('rentals.generateBiwo');
+
+        // BIWO: płatność kodem
+        Route::post('rentals/biwo/pay', [ClientRentalController::class, 'payWithBiwo'])
+            ->name('rentals.payWithBiwo');
     });
 
     Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
@@ -71,9 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes
 Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
-
     // Dashboard view
-    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Equipment
     Route::resource('equipment', AdminEquipmentController::class)->except(['show']);
@@ -122,11 +132,37 @@ Route::middleware(['auth'])->prefix('client/rentals')->name('client.rentals.')->
     Route::get('complaints/{rental}', [ClientRentalComplaintController::class, 'show'])->name('complaints.show');
 });
 
-// Reklamacje - admin
 Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->group(function () {
+    // Reklamacje - admin
     Route::get('complaints', [AdminRentalComplaintController::class, 'index'])->name('complaints.index');
     Route::get('complaints/{rental}', [AdminRentalComplaintController::class, 'show'])->name('complaints.show');
     Route::post('complaints/{rental}/resolve', [AdminRentalComplaintController::class, 'resolve'])->name('complaints.resolve');
+
+    // Zamówienia - admin
+    Route::get('list', [AdminRentalController::class, 'index'])->name('list.index');
+    Route::get('show/{rental}', [AdminRentalController::class, 'show'])->name('show');
+    Route::get('edit/{rental}', [AdminRentalController::class, 'edit'])->name('edit');
+
+    Route::patch('{rental}/approve', [AdminRentalController::class, 'approve'])->name('approve');
+    Route::patch('{rental}/cancel', [AdminRentalController::class, 'cancel'])->name('cancel');
+    Route::patch('{rental}/reject', [AdminRentalController::class, 'reject'])->name('reject');
+    Route::patch('{rental}/update', [AdminRentalController::class, 'update'])->name('update');
+
+    // Tworzenie zamówienia - multi-step
+    Route::get('create/step1', [AdminRentalController::class, 'createStep1'])->name('create.step1');
+    Route::post('create/step1/select', [AdminRentalController::class, 'postSelectUser'])->name('create.step1.select');
+    Route::get('create/step2', [AdminRentalController::class, 'createStep2'])->name('create.step2');
+    Route::post('create/step2/select', [AdminRentalController::class, 'postSelectEquipment'])->name('create.step2.select');
+    Route::get('create/summary', [AdminRentalController::class, 'summary'])->name('create.summary');
+    Route::match(['get','post'], 'create/payment', [AdminRentalController::class, 'payment'])
+         ->name('create.payment');
+    Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
+
+    // BIWO w trakcie tworzenia (create/payment)
+    Route::get('biwo/create/generate/{tempKey}', [AdminRentalController::class, 'generateBiwoForCreate'])
+         ->name('biwo.create.generate');
+    Route::post('biwo/create/pay/{tempKey}', [AdminRentalController::class, 'payWithBiwoForCreate'])
+         ->name('biwo.create.pay');
 });
 
 Route::get('/promocje/regulamin', function () {

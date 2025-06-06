@@ -1,5 +1,3 @@
-{{-- resources/views/rentals/summary.blade.php --}}
-
 @extends('layouts.app')
 
 @section('content')
@@ -20,7 +18,16 @@
                 <p><strong>Cena za dzień:</strong> {{ number_format($equipment->finalPrice(), 2, ',', ' ') }} zł</p>
                 <p><strong>Dostępność:</strong> {{ ucfirst($equipment->availability) }}</p>
                 <p><strong>Stan techniczny:</strong> {{ ucfirst($equipment->technical_state) }}</p>
-                <p class="mb-4"><strong>Opis:</strong> {{ $equipment->description }}</p>
+
+                @if ($errors->any())
+                    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <form action="{{ route('client.rentals.store') }}" method="POST" class="mt-4 max-w-full">
                     @csrf
@@ -39,6 +46,7 @@
                         required
                         min="{{ now()->toDateString() }}"
                         class="border p-2 rounded block mb-3 w-full"
+                        value="{{ old('start_date') }}"
                     >
 
                     <label for="end_date" class="block font-medium mb-1">Data zakończenia:</label>
@@ -49,6 +57,7 @@
                         required
                         min="{{ now()->toDateString() }}"
                         class="border p-2 rounded block mb-4 w-full"
+                        value="{{ old('end_date') }}"
                     >
 
                     <div class="mb-4">
@@ -58,9 +67,21 @@
                             id="with_operator"
                             value="1"
                             class="mr-2"
+                            {{ old('with_operator') ? 'checked' : '' }}
                         >
                         <label for="with_operator" class="font-medium">Potrzebuję operatora</label>
                     </div>
+
+                    <label for="notes" class="block font-medium mb-1">Notatki do wypożyczenia (opcjonalnie):</label>
+                    <textarea
+                        name="notes"
+                        id="notes"
+                        rows="7"
+                        class="border border-gray-300 p-3 rounded-md block w-full
+                               focus:outline-none focus:ring-2 focus:ring-[#f56600] focus:border-[#f56600]
+                               resize-none placeholder-gray-400 shadow-sm"
+                        placeholder="Np. szczególne uwagi, preferencje..."
+                    >{{ old('notes') }}</textarea>
 
                     {{-- Wyświetlenie kwoty przed i po rabacie --}}
                     <p id="total_price" class="font-semibold text-lg mb-4 hidden"></p>
@@ -190,8 +211,17 @@
                 }
                 updateTotalPrice();
             });
-            endInput.addEventListener('change', updateTotalPrice);
+
+            endInput.addEventListener('change', () => {
+                if (startInput.value && endInput.value && endInput.value < startInput.value) {
+                    endInput.value = startInput.value;
+                }
+                updateTotalPrice();
+            });
+
             withOperatorInput.addEventListener('change', updateTotalPrice);
+
+            updateTotalPrice();
         });
     </script>
 @endsection

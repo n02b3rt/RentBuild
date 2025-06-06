@@ -20,6 +20,7 @@ class CreateRentalsTable extends Migration
                 'aktualne',
                 'zrealizowane',
                 'anulowane',
+                'odrzucone',
                 'reklamacja',
                 'reklamacja_weryfikacja',
                 'reklamacja_odrzucono',
