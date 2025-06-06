@@ -23,6 +23,7 @@
                 <li><a href="#" class="hover:underline text-orange-400" id="about_us">O nas</a></li>
                 <li><a href="#" class="hover:underline text-orange-400">Regulamin</a></li>
                 <li><a href="#" class="hover:underline text-orange-400">Polityka prywatności</a></li>
+                <li><a href="{{route('promotions.rules')}}" class="hover:underline text-orange-400">Regulamin promocji</a></li>
             </ul>
         </div>
 

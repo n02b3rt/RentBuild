@@ -1,14 +1,39 @@
+{{-- resources/views/rentals/show.blade.php --}}
+
 @extends('layouts.app')
 
 @section('content')
-    <section class="max-w-[1140px] mx-auto px-4 py-12">
-        <div class="flex  bg-white p-10 rounded-md shadow-md">
-            <div class="max-h-[500px] mr-14 w-1/2">
+    <section class="max-w-[1140px] mx-auto px-4 py-12 max-md:px-0">
+        @php
+            // Obliczamy rabat lojalnościowy na podstawie dotychczasowych wypożyczeń:
+            $rentalsCount = Auth::user()->rentals_count ?? 0;
+            if ($rentalsCount === 0) {
+                $discountPercent = 20;
+            } elseif ((($rentalsCount + 1) % 20) === 0) {
+                $discountPercent = 50;
+            } elseif ((($rentalsCount + 1) % 5) === 0) {
+                $discountPercent = 25;
+            } else {
+                $discountPercent = 0;
+            }
+        @endphp
+
+        {{-- Banner z informacją o zniżce lojalnościowej --}}
+        @if($discountPercent > 0)
+            <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md text-center">
+                <p class="text-lg text-blue-700 font-semibold">
+                    Otrzymujesz <span class="text-2xl">{{ $discountPercent }}%</span> zniżki na to wypożyczenie.
+                </p>
+            </div>
+        @endif
+
+        <div class="flex max-md:flex-col bg-white p-10 max-sm:p-4 rounded-md shadow-md">
+            <div class="max-h-[500px] max-md:w-full lg:mr-14 max-md:mr-2 w-1/2">
                 <h1 class="text-4xl font-bold mb-4 text-center">{{ $equipment->name }}</h1>
                 <div id="slider" class="relative w-full max-w-xl mx-auto">
                     <img id="slider-image"
                          src="/{{ $equipment->thumbnail }}"
-                         class="h-[400px] w-auto mx-auto rounded shadow mb-4"
+                         class="h-[400px] max-md:h-[250px] max-sm:h-[200px] w-auto mx-auto rounded shadow mb-4"
                          alt="Zdjęcie sprzętu">
 
                     @if(count($additionalPhotos) > 0)
@@ -25,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="w-1/2 flex flex-col justify-center p-12">
+            <div class="w-1/2 flex flex-col max-md:w-full justify-center p-12 max-md:py-12 max-lg:px-6">
                 <div>
                     <span class="text-xs text-gray-500">
                         Najniższa cena z 30 dni {{ number_format($equipment->rental_price, 2) }} zł
@@ -81,7 +106,6 @@
                     @else
                         <span class="italic">Zaloguj się, aby złożyć zamówienie.</span>
                     @endauth
-
                 </div>
             </div>
         </div>
@@ -98,45 +122,29 @@
                 @endforeach
             ];
 
-            console.log('Photos array:', photos); // logujemy tablicę
-
             let current = 0;
 
             function showSlide(index) {
-                console.log('Trying to show slide index:', index);
                 const img = document.getElementById('slider-image');
-                if (!img) {
-                    console.error('Slider image element not found!');
-                    return;
+                if (photos[index]) {
+                    img.src = photos[index];
                 }
-
-                if (!photos[index]) {
-                    console.warn('No photo at index:', index);
-                    return;
-                }
-
-                console.log('Setting image source to:', photos[index]);
-                img.src = photos[index];
             }
 
             function nextSlide() {
                 current = (current + 1) % photos.length;
-                console.log('Next slide:', current);
                 showSlide(current);
             }
 
             function prevSlide() {
                 current = (current - 1 + photos.length) % photos.length;
-                console.log('Previous slide:', current);
                 showSlide(current);
             }
 
             window.nextSlide = nextSlide;
             window.prevSlide = prevSlide;
 
-            showSlide(current); // inicjalizacja
+            showSlide(current);
         });
     </script>
-
 @endpush
-

@@ -12,36 +12,69 @@ use Carbon\Carbon;
 
 class ClientRentalController extends Controller
 {
+    private function getLoyalDiscount(int $currentRentalsCount): int
+    {
+        // 1) Pierwsze wypożyczenie (rentals_count == 0) → 20%
+        if ($currentRentalsCount === 0) {
+            return 20;
+        }
+        // 2) Co 20-te wypożyczenie → 50%
+        if ((($currentRentalsCount + 1) % 20) === 0) {
+            return 50;
+        }
+        // 3) Co 5-te (ale nie 20-te) → 25%
+        if ((($currentRentalsCount + 1) % 5) === 0) {
+            return 25;
+        }
+        // 4) Inne przypadki → brak rabatu
+        return 0;
+    }
+
     public function store(Request $request)
     {
+        // Walidacja pól
         $request->validate([
-            'equipment_id' => 'required|exists:equipment,id',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'notes' => 'nullable|string|max:1000',
+            'equipment_id'  => 'required|exists:equipment,id',
+            'start_date'    => 'required|date|after_or_equal:today',
+            'end_date'      => 'required|date|after_or_equal:start_date',
+            'with_operator' => 'sometimes|boolean',
+            'notes'         => 'nullable|string|max:1000',
         ]);
 
         $equipment = Equipment::findOrFail($request->equipment_id);
 
+        // Obliczamy dni wypożyczenia
         $start = Carbon::parse($request->start_date);
         $end   = Carbon::parse($request->end_date);
         $days  = $start->diffInDays($end) + 1;
 
-        // ceny jednostkowe
+        // Stawki
         $dailyEq      = $equipment->finalPrice();
         $operatorRate = $equipment->operator_daily_rate;
 
-        // koszty
+        // Surowe koszty
         $equipmentCost = round($days * $dailyEq, 2);
         $operatorCost  = $request->has('with_operator')
             ? round($days * $operatorRate, 2)
             : 0;
 
-        $total = round($equipmentCost + $operatorCost, 2);
+        $rawTotal = round($equipmentCost + $operatorCost, 2);
 
-        $notes = $request->input('notes', '');
+        // 1) Pobieramy liczbę dotychczasowych wypożyczeń użytkownika
+        $user = Auth::user();
+        $currentRentalsCount = $user->rentals_count;
 
-        // zapisz wszystko w sesji
+        // 2) Wyliczamy procent rabatu lojalnościowego
+        $discountPercent = $this->getLoyalDiscount($currentRentalsCount);
+
+        // 3) Wyliczamy kwotę rabatu i kwotę po rabacie
+        $discountAmount  = round($rawTotal * ($discountPercent / 100), 2);
+        $discountedTotal = round($rawTotal - $discountAmount, 2);
+
+        // Notatki (opcjonalnie)
+        $notes = $request->input('notes', null);
+
+        // Zapisujemy do sesji wszystkie niezbędne dane
         session([
             'rental_data' => [
                 'equipment_id'         => $equipment->id,
@@ -53,7 +86,10 @@ class ClientRentalController extends Controller
                 'equipment_cost'       => $equipmentCost,
                 'operator_daily_rate'  => $operatorRate,
                 'operator_cost'        => $operatorCost,
-                'total_price'          => $total,
+                // Tym razem 'total_price' = wartość PO rabacie:
+                'total_price'          => $discountedTotal,
+                'discount_percent'     => $discountPercent,
+                'discount_amount'      => $discountAmount,
                 'notes'                => $notes,
             ]
         ]);
@@ -79,33 +115,41 @@ class ClientRentalController extends Controller
     public function payment()
     {
         $data = session('rental_data');
-
         if (! $data) {
             return redirect()
                 ->route('client.rentals.index')
                 ->withErrors('Brak danych do wypożyczenia.');
         }
 
+        // Ładujemy Equipment i „tymczasowy” Rental, by mieć relację equipment itp.
         $equipment = Equipment::findOrFail($data['equipment_id']);
-
         $rental = new Rental([
             'equipment_id'  => $equipment->id,
             'start_date'    => $data['start_date'],
             'end_date'      => $data['end_date'],
             'with_operator' => $data['with_operator'],
             'notes'         => $data['notes'] ?? null,
+            // Ta wartość jest już price po rabacie:
             'total_price'   => $data['total_price'],
         ]);
-
         $rental->setRelation('equipment', $equipment);
 
-        return view('rentals.payment', compact('rental'));
+        // Pobieramy z sesji to, co zapisaliśmy wcześniej:
+        $totalPrice      = $data['total_price'];         // kwota PO rabacie
+        $discountPercent = $data['discount_percent']     ?? 0;
+        $discountAmount  = $data['discount_amount']      ?? 0;
+
+        return view('rentals.payment', compact(
+            'rental',
+            'totalPrice',
+            'discountPercent',
+            'discountAmount'
+        ));
     }
 
     public function processPayment(Request $request)
     {
         $data = session('rental_data');
-
         if (! $data) {
             return redirect()
                 ->route('client.rentals.index')
@@ -113,7 +157,6 @@ class ClientRentalController extends Controller
         }
 
         $equipment = Equipment::findOrFail($data['equipment_id']);
-
         if (! $equipment->isAvailable()) {
             return redirect()
                 ->route('client.rentals.index')
@@ -122,15 +165,22 @@ class ClientRentalController extends Controller
 
         $user = Auth::user();
 
-        if ($user->account_balance < $data['total_price']) {
+        // 1) Pobieramy z requesta ostateczną kwotę do zapłaty (już po rabacie)
+        //    Tę samą, którą zapisaliśmy w sesji jako 'total_price'
+        $finalPrice = $request->input('total_price');
+
+        // 2) Sprawdzamy saldo
+        if ($user->account_balance < $finalPrice) {
             return redirect()
-                ->route('client.rentals.topup')
-                ->with('not_enough', true);
+                ->route('client.rentals.payment')
+                ->withErrors('Brak wystarczających środków na koncie.');
         }
 
-        $user->account_balance = round($user->account_balance - $data['total_price'], 2);
+        // 3) Odejmujemy od salda
+        $user->account_balance = round($user->account_balance - $finalPrice, 2);
         $user->save();
 
+        // 4) Tworzymy Rental z zachowaniem zapłaty po rabacie
         $rental = Rental::create([
             'user_id'           => $user->id,
             'equipment_id'      => $equipment->id,
@@ -139,18 +189,22 @@ class ClientRentalController extends Controller
             'status'            => 'oczekujace',
             'notes'             => $data['notes'] ?? null,
             'payment_reference' => 'fake_payment_token_' . uniqid(),
-            'total_price'       => $data['total_price'],
+            'total_price'       => $finalPrice,
             'with_operator'     => $data['with_operator'],
+            // Jeśli chcesz, możesz dodać:
+            // 'discount_percent' => $data['discount_percent'],
+            // 'discount_amount'  => $data['discount_amount'],
         ]);
 
         $equipment->availability = 'niedostepny';
         $equipment->save();
 
+        // 5) Zapomnij dane sesji
         session()->forget('rental_data');
 
         return redirect()
             ->route('client.rentals.index')
-            ->with('success', 'Płatność została zaakceptowana, wypożyczenie oczekuje na akceptacje.');
+            ->with('success', 'Płatność została zaakceptowana, wypożyczenie oczekuje na akceptację.');
     }
 
     public function cancel(Rental $rental)
@@ -287,8 +341,6 @@ class ClientRentalController extends Controller
             'end_date'          => $data['end_date'],
             'with_operator'     => $data['with_operator'],
             'notes'             => $data['notes'] ?? null,
-            // Ponieważ przez BIWO przyjęliśmy płatność, w payment_reference
-            // możesz wstawić np. „biwo_{user_id}_{timestamp}”
             'payment_reference' => 'biwo_' . $user->id . '_' . now()->timestamp,
             'status'            => 'oczekujace',
             'total_price'       => $data['total_price'],

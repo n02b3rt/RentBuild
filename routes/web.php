@@ -26,7 +26,6 @@ Route::get('/equipments/{id}', [EquipmentController::class, 'show'])->name('equi
 Route::get('/equipments/{id}/preview', [EquipmentController::class, 'showPreview'])->name('equipment.showPreview');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
     // Dashboard przekierowujący wg roli
     Route::get('/dashboard', function () {
         $user = Auth::user();
@@ -37,7 +36,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Client routes
     Route::prefix('client')->name('client.')->group(function () {
-
         // Rentals
         Route::prefix('rentals')->name('rentals.')->controller(ClientRentalController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -84,7 +82,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes
 Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
-
     // Dashboard view
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -146,10 +143,10 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::get('show/{rental}', [AdminRentalController::class, 'show'])->name('show');
     Route::get('edit/{rental}', [AdminRentalController::class, 'edit'])->name('edit');
 
-    Route::patch('/{rental}/approve', [AdminRentalController::class, 'approve'])->name('approve');
-    Route::patch('/{rental}/cancel', [AdminRentalController::class, 'cancel'])->name('cancel');
-    Route::patch('/{rental}/reject', [AdminRentalController::class, 'reject'])->name('reject');
-    Route::patch('/{rental}/update', [AdminRentalController::class, 'update'])->name('update');
+    Route::patch('{rental}/approve', [AdminRentalController::class, 'approve'])->name('approve');
+    Route::patch('{rental}/cancel', [AdminRentalController::class, 'cancel'])->name('cancel');
+    Route::patch('{rental}/reject', [AdminRentalController::class, 'reject'])->name('reject');
+    Route::patch('{rental}/update', [AdminRentalController::class, 'update'])->name('update');
 
     // Tworzenie zamówienia - multi-step
     Route::get('create/step1', [AdminRentalController::class, 'createStep1'])->name('create.step1');
@@ -158,11 +155,18 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::post('create/step2/select', [AdminRentalController::class, 'postSelectEquipment'])->name('create.step2.select');
     Route::get('create/summary', [AdminRentalController::class, 'summary'])->name('create.summary');
     Route::match(['get','post'], 'create/payment', [AdminRentalController::class, 'payment'])
-     ->name('create.payment');
+         ->name('create.payment');
     Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
+
+    // BIWO w trakcie tworzenia (create/payment)
+    Route::get('biwo/create/generate/{tempKey}', [AdminRentalController::class, 'generateBiwoForCreate'])
+         ->name('biwo.create.generate');
+    Route::post('biwo/create/pay/{tempKey}', [AdminRentalController::class, 'payWithBiwoForCreate'])
+         ->name('biwo.create.pay');
 });
 
-
-
+Route::get('/promocje/regulamin', function () {
+    return view('promotions.rules');
+})->name('promotions.rules');
 
 require __DIR__.'/auth.php';
