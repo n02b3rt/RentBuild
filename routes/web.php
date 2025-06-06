@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
 use App\Http\Controllers\ClientAccountController;
@@ -75,7 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::prefix('admin/dashboard')->name('admin.')->middleware(['auth', 'verified', EnsureTwoFactorIsVerified::class])->group(function () {
 
     // Dashboard view
-    Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Equipment
     Route::resource('equipment', AdminEquipmentController::class)->except(['show']);
