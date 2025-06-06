@@ -38,7 +38,12 @@ class DashboardController extends Controller
                 return $carry + ($rate * $days);
             }, 0);
 
-        // Dane do wykresu dziennych przychodów
+        // Sumaryczne straty z reklamacji_przyjeto
+        $totalComplaintLoss = $rentals
+            ->where('status', 'reklamacja_przyjeto')
+            ->sum('total_price');
+
+        // 6. Dane do wykresu dziennych przychodów
         $dailySales = $rentals
             ->groupBy(fn($r) => $r->created_at->format('Y-m-d'))
             ->map(fn($group) => [
@@ -53,7 +58,8 @@ class DashboardController extends Controller
         //    - liczbę wypożyczeń
         //    - sumę brutto (total_price)
         //    - sumę kosztów operatora
-        //    - sumę netto (brutto - operator_cost)
+        //    - sumę netto
+        //    - sumę strat z reklamacji_przyjeto
         $userStats = [];
 
         foreach ($rentals as $rental) {
@@ -71,12 +77,13 @@ class DashboardController extends Controller
 
             if (! isset($userStats[$uid])) {
                 $userStats[$uid] = [
-                    'count'          => 0,
-                    'brutto'         => 0.0,
-                    'operator_cost'  => 0.0,
-                    'netto'          => 0.0,
-                    'first_name'     => $rental->user->first_name,
-                    'last_name'      => $rental->user->last_name,
+                    'count'            => 0,
+                    'brutto'           => 0.0,
+                    'operator_cost'    => 0.0,
+                    'netto'            => 0.0,
+                    'complaint_loss'   => 0.0,
+                    'first_name'       => $rental->user->first_name,
+                    'last_name'        => $rental->user->last_name,
                 ];
             }
 
@@ -84,28 +91,34 @@ class DashboardController extends Controller
             $userStats[$uid]['brutto']        += $rental->total_price;
             $userStats[$uid]['operator_cost'] += $opCostRental;
             $userStats[$uid]['netto']         += ($rental->total_price - $opCostRental);
+
+            // uwzględniamy stratę tylko gdy status == 'reklamacja_przyjeto'
+            if ($rental->status === 'reklamacja_przyjeto') {
+                $userStats[$uid]['complaint_loss'] += $rental->total_price;
+            }
         }
 
-        // Znajdujemy „top” użytkownika po sumie netto (lub brutto—tu używamy netto)
+        // 8. Znajdujemy „top” użytkownika po sumie netto
         if (! empty($userStats)) {
-            // sortujemy malejąco po 'netto'
             uasort($userStats, fn($a, $b) => $b['netto'] <=> $a['netto']);
             $top = reset($userStats);
 
-            $topUserName      = trim($top['first_name'] . ' ' . $top['last_name']);
-            $topUserCount     = $top['count'];
-            $topUserBrutto    = $top['brutto'];
-            $topUserOpCost    = $top['operator_cost'];
-            $topUserNetto     = $top['netto'];
+            $topUserName          = trim($top['first_name'] . ' ' . $top['last_name']);
+            $topUserCount         = $top['count'];
+            $topUserBrutto        = $top['brutto'];
+            $topUserOpCost        = $top['operator_cost'];
+            $topUserNetto         = $top['netto'];
+            $topUserComplaintLoss = $top['complaint_loss'];
         } else {
-            $topUserName      = '–';
-            $topUserCount     = 0;
-            $topUserBrutto    = 0.0;
-            $topUserOpCost    = 0.0;
-            $topUserNetto     = 0.0;
+            $topUserName          = '–';
+            $topUserCount         = 0;
+            $topUserBrutto        = 0.0;
+            $topUserOpCost        = 0.0;
+            $topUserNetto         = 0.0;
+            $topUserComplaintLoss = 0.0;
         }
 
-        // Budujemy kolekcję wierszy tabeli (ze sprzętem i użytkownikiem)
+        // 9. Budujemy kolekcję wierszy tabeli (ze sprzętem i użytkownikiem)
         $allRows = $rentals->map(function (Rental $rental) {
             $start = Carbon::parse($rental->start_date);
             $end   = Carbon::parse($rental->end_date);
@@ -124,10 +137,11 @@ class DashboardController extends Controller
                 'brutto'          => $rental->total_price,
                 'operator_cost'   => $opCost,
                 'netto'           => $rental->total_price - $opCost,
+                'status'          => $rental->status,
             ];
         });
 
-        // Sortowanie według GET: sort i direction
+        // 10. Sortowanie według GET: sort i direction
         $sort      = $request->get('sort', 'date');
         $direction = $request->get('direction', 'asc');
         $allowed   = ['date', 'equipment_name', 'user_name', 'brutto', 'operator_cost', 'netto'];
@@ -166,6 +180,7 @@ class DashboardController extends Controller
             'totalRentals',
             'averageRental',
             'operatorCost',
+            'totalComplaintLoss',
             'dailySales',
             'startDate',
             'now',
@@ -174,9 +189,11 @@ class DashboardController extends Controller
             'topUserBrutto',
             'topUserOpCost',
             'topUserNetto',
+            'topUserComplaintLoss',
             'rentalDetails',
             'sort',
             'direction'
         ));
     }
 }
+

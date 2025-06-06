@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        {{-- 2) Najlepszy klient --}}
+        {{-- 2) Najlepszy klient + jego statystyki --}}
         <div class="mb-8 bg-white shadow rounded-lg p-4 sm:p-6">
             <h3 class="text-lg sm:text-xl font-semibold mb-4">Najlepszy klient (ostatnie 30 dni)</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm sm:text-base">
@@ -63,10 +63,24 @@
                     <span class="w-full sm:w-40 text-gray-600">Suma netto:</span>
                     <span class="font-medium">{{ number_format($topUserNetto, 2, ',', ' ') }} zł</span>
                 </div>
+                <div class="flex flex-col sm:flex-row">
+                    <span class="w-full sm:w-40 text-gray-600">Straty z reklamacji:</span>
+                    <span class="font-medium text-red-600">
+                        {{ number_format($topUserComplaintLoss, 2, ',', ' ') }} zł
+                    </span>
+                </div>
             </div>
         </div>
 
-        {{-- 3) Wykres dziennych przychodów --}}
+        {{-- 3) Całkowite straty z reklamacji --}}
+        <div class="mb-8 bg-white shadow rounded-lg p-4 sm:p-6">
+            <h3 class="text-lg sm:text-xl font-semibold mb-2 text-red-800">Łączne straty z reklamacji</h3>
+            <p class="text-base sm:text-lg font-bold text-red-700">
+                {{ number_format($totalComplaintLoss, 2, ',', ' ') }} zł
+            </p>
+        </div>
+
+        {{-- 4) Wykres dziennych przychodów --}}
         <div class="bg-white shadow rounded-lg p-4 sm:p-6 mb-8">
             <h3 class="text-lg sm:text-xl font-semibold mb-4">Przychód wg dni</h3>
             <div class="w-full overflow-x-auto">
@@ -74,114 +88,24 @@
             </div>
         </div>
 
-        {{-- 4) Okres --}}
+        {{-- 5) Okres --}}
         <div class="mb-4 text-gray-600 text-sm sm:text-base">
             Okres: <span class="font-medium">{{ $startDate->format('Y-m-d') }}</span>
             – <span class="font-medium">{{ $now->format('Y-m-d') }}</span>
         </div>
 
-        {{-- 5) Tabela wypożyczeń --}}
+        {{-- 6) Tabela wypożyczeń --}}
         <div class="bg-white shadow rounded-lg p-4 sm:p-6 mb-8 overflow-x-auto">
             <h3 class="text-lg sm:text-xl font-semibold mb-4">Szczegóły wypożyczeń (ostatnie 30 dni)</h3>
             <table class="min-w-full table-auto text-sm sm:text-base">
                 <thead>
                 <tr class="bg-gray-200 text-gray-700">
-                    <th class="px-2 sm:px-4 py-2 text-left">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'date', 'direction' => ($sort === 'date' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex items-center">
-                            <span>Data</span>
-                            @if($sort === 'date')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-2 sm:px-4 py-2 text-left">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'equipment_name', 'direction' => ($sort === 'equipment_name' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex items-center">
-                            <span>Sprzęt</span>
-                            @if($sort === 'equipment_name')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-2 sm:px-4 py-2 text-left">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'user_name', 'direction' => ($sort === 'user_name' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex items-center">
-                            <span>Użytkownik</span>
-                            @if($sort === 'user_name')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-2 sm:px-4 py-2 text-right">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'brutto', 'direction' => ($sort === 'brutto' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex justify-end items-center">
-                            <span>Brutto (zł)</span>
-                            @if($sort === 'brutto')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-2 sm:px-4 py-2 text-right">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'operator_cost', 'direction' => ($sort === 'operator_cost' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex justify-end items-center">
-                            <span>Koszt operatora (zł)</span>
-                            @if($sort === 'operator_cost')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-2 sm:px-4 py-2 text-right">
-                        <a href="{{ route('admin.dashboard', array_merge(request()->query(), ['sort' => 'netto', 'direction' => ($sort === 'netto' && $direction === 'asc') ? 'desc' : 'asc'])) }}" class="flex justify-end items-center">
-                            <span>Netto (zł)</span>
-                            @if($sort === 'netto')
-                                @if($direction === 'asc')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                @endif
-                            @endif
-                        </a>
-                    </th>
+                    <th class="px-2 sm:px-4 py-2 text-left">Data</th>
+                    <th class="px-2 sm:px-4 py-2 text-left">Sprzęt</th>
+                    <th class="px-2 sm:px-4 py-2 text-left">Użytkownik</th>
+                    <th class="px-2 sm:px-4 py-2 text-right">Brutto (zł)</th>
+                    <th class="px-2 sm:px-4 py-2 text-right">Koszt operatora (zł)</th>
+                    <th class="px-2 sm:px-4 py-2 text-right">Netto (zł)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -210,7 +134,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('revenueChart').getContext('2d');
-
             const labels = {!! json_encode($dailySales->pluck('date')) !!};
             const dataTotals = {!! json_encode($dailySales->pluck('total')) !!};
 
