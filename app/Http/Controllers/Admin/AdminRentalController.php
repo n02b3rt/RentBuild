@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\Equipment;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -346,10 +348,5 @@ class AdminRentalController extends Controller
 
         return redirect()->route('admin.rentals.list.index')
             ->with('success', 'Wypożyczenie zostało utworzone a płatność zatwierdzona');
-    }
-
-    public function payWithBiwo(Request $request)
-    {
-
     }
 }

@@ -59,6 +59,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Link potwierdzający z tokenem
         Route::get('topup/confirm/{token}', [ClientAccountController::class, 'confirmTopUp'])
             ->name('topup.confirm');
+
+        // BIWO: generowanie kodu
+        Route::get('rentals/biwo/generate', [ClientRentalController::class, 'generateBiwoCode'])
+            ->name('rentals.generateBiwo');
+
+        // BIWO: płatność kodem
+        Route::post('rentals/biwo/pay', [ClientRentalController::class, 'payWithBiwo'])
+            ->name('rentals.payWithBiwo');
     });
 
     Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
@@ -149,10 +157,11 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::get('create/step2', [AdminRentalController::class, 'createStep2'])->name('create.step2');
     Route::post('create/step2/select', [AdminRentalController::class, 'postSelectEquipment'])->name('create.step2.select');
     Route::get('create/summary', [AdminRentalController::class, 'summary'])->name('create.summary');
-    Route::post('create/payment', [AdminRentalController::class, 'payment'])->name('create.payment');
+    Route::match(['get','post'], 'create/payment', [AdminRentalController::class, 'payment'])
+     ->name('create.payment');
     Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
-    Route::post('create/payWithBiwo', [AdminRentalController::class, 'payWithBiwo'])->name('create.payWithBiwo');
 });
+
 
 
 

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('admin-content')
-    <div class="container mx-auto px-4 py-6 max-w-md">
+    <div class="container mx-auto px-4 py-6 max-w-lg">
         <h1 class="text-3xl font-bold mb-6">Płatność</h1>
 
         @php
@@ -15,6 +15,9 @@
                 ? \App\Models\User::find($userId)
                 : null;
             $userBalance = $user->account_balance ?? 0;
+
+            // Generujemy tempKey na bazie session_id (dzięki temu jest unikalny per sesja)
+            $tempKey = 'admin_biwo_create_' . session()->getId();
         @endphp
 
         <p class="mb-4">
@@ -42,46 +45,13 @@
                         potrzebuje {{ number_format($totalPrice, 2, ',', ' ') }} zł
                     </p>
 
-                    {{-- Tekst wyglądający jak nieaktywny przycisk --}}
+                    {{-- Przycisk „Klient musi doładować” (tylko informacyjnie) --}}
                     <div
                         class="bg-gray-400 text-white font-semibold py-2 px-6 rounded w-full text-center cursor-not-allowed"
                     >
-                        Pobierz z konta klienta
-                    </div>
-
-                    <a
-                        href="{{ route('client.account.topup.form') }}"
-                        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded w-full text-center"
-                    >
                         Klient musi doładować konto
-                    </a>
+                    </div>
                 @endif
-
-                {{-- Opcja: zapłać kodem BIWO --}}
-                <form
-                    method="POST"
-                    action="{{ route('admin.rentals.create.payWithBiwo') }}"
-                    class="bg-yellow-100 p-4 rounded shadow-inner"
-                >
-                    @csrf
-                    <label for="code" class="block text-sm font-medium mb-1">
-                        Lub zapłać kodem BIWO
-                    </label>
-                    <input
-                        type="text"
-                        name="code"
-                        id="code"
-                        required
-                        class="border p-2 rounded w-full mb-3"
-                        placeholder="Wpisz kod BIWO"
-                    >
-                    <button
-                        type="submit"
-                        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded w-full"
-                    >
-                        Zapłać kodem BIWO
-                    </button>
-                </form>
             </div>
         @endif
     </div>

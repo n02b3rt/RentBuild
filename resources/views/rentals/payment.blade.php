@@ -73,30 +73,7 @@
                     </a>
 
                     {{-- Formularz na kod BIWO --}}
-                    <form
-                        method="POST"
-                        action="{{ route('client.rentals.payWithBiwo') }}"
-                        class="bg-yellow-100 p-4 rounded shadow-inner"
-                    >
-                        @csrf
-                        <label for="code" class="block text-sm font-medium mb-1">
-                            Lub zapłać kodem BIWO
-                        </label>
-                        <input
-                            type="text"
-                            name="code"
-                            id="code"
-                            required
-                            class="border p-2 rounded w-full mb-3"
-                            placeholder="Wpisz kod BIWO"
-                        >
-                        <button
-                            type="submit"
-                            class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded w-full"
-                        >
-                            Zapłać kodem BIWO
-                        </button>
-                    </form>
+                    <x-biwo-payment />
 
                     <p class="text-sm text-gray-600 text-center">
                         Masz {{ number_format(Auth::user()->account_balance, 2, ',', ' ') }} zł –

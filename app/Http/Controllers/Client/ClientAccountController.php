@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use App\Models\User;
 
 class ClientAccountController extends Controller
