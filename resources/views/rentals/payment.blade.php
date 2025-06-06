@@ -66,7 +66,7 @@
             @else
                 <div class="flex flex-col gap-4 mt-6">
                     <a
-                        href="{{ route('client.account.topup.form') }}"
+                        href="{{ route('client.topup.form') }}"
                         class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded w-full text-center"
                     >
                         Brak środków – Doładuj konto

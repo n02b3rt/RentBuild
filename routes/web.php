@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Client\ClientAccountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\ClientRentalController;
-use App\Http\Controllers\ClientAccountController;
 use App\Http\Controllers\Admin\AdminEquipmentController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProfileController;
@@ -52,11 +52,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/payWithBiwo', 'payWithBiwo')->name('payWithBiwo');
         });
 
-        // Account top-up
-        Route::prefix('account')->name('account.')->controller(ClientAccountController::class)->group(function () {
-            Route::get('/topup', 'showTopupForm')->name('topup.form');
-            Route::post('/topup', 'processTopup')->name('topup.process');
-        });
+        // GET|POST doładowania (widok: client.topup)
+        Route::match(['get','post'], 'topup', [ClientAccountController::class, 'handleTopUp'])
+            ->name('topup.form');
+
+        // Link potwierdzający z tokenem
+        Route::get('topup/confirm/{token}', [ClientAccountController::class, 'confirmTopUp'])
+            ->name('topup.confirm');
     });
 
     Route::prefix('profile/2fa')->name('2fa.')->controller(TwoFactorController::class)->group(function () {
@@ -151,6 +153,7 @@ Route::middleware(['auth'])->prefix('admin/rentals')->name('admin.rentals.')->gr
     Route::post('create/finalize', [AdminRentalController::class, 'finalize'])->name('create.finalize');
     Route::post('create/payWithBiwo', [AdminRentalController::class, 'payWithBiwo'])->name('create.payWithBiwo');
 });
+
 
 
 require __DIR__.'/auth.php';
